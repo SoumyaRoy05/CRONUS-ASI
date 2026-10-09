@@ -13,14 +13,17 @@ from typing import Any
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+def root_dir() -> Path:
+    if getattr(sys, "frozen", False):
+        meipass = getattr(sys, "_MEIPASS", Path(__file__).resolve().parent)
+        return Path(meipass)
+    return Path(__file__).resolve().parent.parent.parent
+
+PROJECT_ROOT = root_dir()
 FRONTEND_ROOT = PROJECT_ROOT / "Application" / "frontend"
 ATLAS_ENTRYPOINT = PROJECT_ROOT / "atlas.py"
 
-
 class AtlasProcess:
-    """Owns the Atlas subprocess and publishes its output to connected UIs."""
-
     def __init__(self) -> None:
         self._process: subprocess.Popen[str] | None = None
         self._status = "stopped"
@@ -36,17 +39,12 @@ class AtlasProcess:
     def snapshot(self) -> dict[str, Any]:
         with self._lock:
             process = self._process
-            return {
-                "status": self._status,
-                "running": process is not None and process.poll() is None,
-                "logs": list(self._logs),
-            }
+            return {"status": self._status, "running": process is not None and process.poll() is None, "logs": list(self._logs)}
 
     def start(self) -> dict[str, Any]:
         with self._lock:
             if self._process is not None and self._process.poll() is None:
                 return self.snapshot()
-
             environment = os.environ.copy()
             environment["PYTHONUNBUFFERED"] = "1"
             environment["PYTHONIOENCODING"] = "utf-8"
@@ -74,14 +72,12 @@ class AtlasProcess:
                 return self.snapshot()
             self._status = "stopping"
             self._publish_locked("[APP] Stop requested.")
-
         process.terminate()
         try:
             process.wait(timeout=5)
         except subprocess.TimeoutExpired:
             process.kill()
             process.wait(timeout=5)
-
         with self._lock:
             self._status = "stopped"
             self._publish_locked("[APP] Atlas process stopped.")
@@ -102,20 +98,16 @@ class AtlasProcess:
         process = self._process
         if process is None or process.stdout is None:
             return
-
         for line in process.stdout:
             text = line.rstrip()
             with self._lock:
                 self._status = self._status_for_log(text, self._status)
                 self._publish_locked(text)
-
         process.wait()
         with self._lock:
             if self._status not in {"stopping", "stopped"}:
                 self._status = "error" if process.returncode else "stopped"
-                self._publish_locked(
-                    f"[APP] Atlas exited with code {process.returncode}."
-                )
+                self._publish_locked(f"[APP] Atlas exited with code {process.returncode}.")
 
     def _publish_locked(self, text: str) -> None:
         event = {"type": "log", "status": self._status, "message": text}
@@ -139,40 +131,32 @@ class AtlasProcess:
             return "stopped"
         return current
 
-
 app = FastAPI(title="Atlas Local Application")
 atlas = AtlasProcess()
-
 
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(FRONTEND_ROOT / "index.html")
 
-
 @app.get("/styles.css")
 def styles() -> FileResponse:
     return FileResponse(FRONTEND_ROOT / "styles.css", media_type="text/css")
 
-
 @app.get("/app.js")
 def script() -> FileResponse:
-    return FileResponse(FRONTEND_ROOT / "app.js", media_type="text/javascript")
-
+    return FileResponse(FRONTEND_ROOT / "app.js", media_type="application/javascript")
 
 @app.get("/api/status")
 def status() -> dict[str, Any]:
     return atlas.snapshot()
 
-
 @app.post("/api/start")
 def start() -> dict[str, Any]:
     return atlas.start()
 
-
 @app.post("/api/stop")
 def stop() -> dict[str, Any]:
     return atlas.stop()
-
 
 @app.websocket("/ws/logs")
 async def logs(websocket: WebSocket) -> None:

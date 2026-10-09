@@ -45,3 +45,9 @@ atlas-voice-assistant = "atlas_voice_assistant:main"
 [build-system]
 requires = ["uv_build>=0.12.1,<0.13.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pillow>=12.3.0",
+    "pystray>=0.19.5",
+]
