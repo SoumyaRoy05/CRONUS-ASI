@@ -6,6 +6,15 @@ Entry point for the Cronus Voice Assistant graphical command interface.
 from __future__ import annotations
 
 import sys
+
+# 0. Windows Process Explicit AppUserModelID (MUST be registered before any UI/Tk initialization)
+if sys.platform == "win32":
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("cronus.asi.titan.v1")
+    except Exception:
+        pass
+
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")

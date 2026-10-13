@@ -48,16 +48,18 @@ import sounddevice as sd
 from kokoro import KPipeline
 
 # Keep the pipeline outside so the model stays in RAM
-pipeline = KPipeline(lang_code="b", repo_id="hexgrad/Kokoro-82M")
+# lang_code="a" (American English phonemization for deep resonant voices)
+pipeline = KPipeline(lang_code="a", repo_id="hexgrad/Kokoro-82M")
 
 def speak(text: str):
     if not text or not text.strip():
         return
 
     reply = text.strip()
-    # Defined locally inside the function
-    voice = "bm_fable"
-    speed = 1.25
+    # Sovereign Titan Voice: 'am_onyx' (Deep, commanding, cinematic male presence)
+    # Supports custom overrides or blends via CRONUS_VOICE (e.g., 'am_onyx' or 'am_onyx,am_fenrir')
+    voice = os.getenv("CRONUS_VOICE", "am_onyx")
+    speed = float(os.getenv("CRONUS_VOICE_SPEED", "1.25"))
 
     # Use a context manager to ensure the output stream is properly closed after use
     with sd.OutputStream(samplerate=24000, channels=1, dtype="float32") as output:

@@ -29,6 +29,9 @@ dependencies = [
     "sounddevice>=0.5.6",
     "torch==2.11.0+cu128",
     "uvicorn[standard]>=0.34.0",
+    "pystray>=0.19.5",
+    "pillow>=12.3.0",
+    "langgraph>=1.2.11",
 ]
 
 [tool.uv.sources]
@@ -50,5 +53,6 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pillow>=12.3.0",
+    "pyinstaller>=6.22.3",
     "pystray>=0.19.5",
 ]

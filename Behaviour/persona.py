@@ -6,7 +6,7 @@ from typing import Optional
 # 1. EXPANDABLE IDENTITY & TITLES POOLS
 # -----------------------------------------------------------------------------
 # Approved call signs Cronus accepts for himself
-ASSISTANT_ALIASES = ["Cronus", "Atlas", "Buddy", "Pal"]
+ASSISTANT_ALIASES = ["Cronus"]
 
 # Noble titles Cronus uses to address you
 NOBLE_TITLES = [

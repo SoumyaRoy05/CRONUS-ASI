@@ -81,9 +81,9 @@ def hear(model: WhisperModel | None = None) -> str:
     ):
         energy_threshold = calibrate_threshold(audio_queue)
         
-        print("Start speaking (session will auto-stop after 4s of silence):\n")
-        print("# ─────────────────── EARS are listening ─────────────────── #")
+        print("\n# ─────────────────── EARS are listening ─────────────────── #")
         print(f"Calibrated energy threshold: {energy_threshold:.4f}\n")
+        print("Session will auto-stop after 4s of silence after speaking\n")
         
         silence_duration = 0.0
         has_spoken_at_least_once = False

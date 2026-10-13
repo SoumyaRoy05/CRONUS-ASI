@@ -5,6 +5,16 @@ Main Window application class coordinating GUI subsystems and background process
 
 from __future__ import annotations
 
+import sys
+
+# Register Windows Application User Model ID before any Tkinter / UI initialization
+if sys.platform == "win32":
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("cronus.asi.titan.v1")
+    except Exception:
+        pass
+
 import queue
 import tkinter as tk
 from tkinter import scrolledtext
@@ -21,10 +31,20 @@ class CronusApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
 
+        # Register Windows Application User Model ID for dedicated taskbar grouping & icon
+        try:
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("cronus.asi.titan.v1")
+        except Exception:
+            pass
+
         self.title("CRONUS")
         self.configure(bg=Theme.BG)
         self.geometry("940x660")
         self.minsize(760, 540)
+
+        # Setup Window Titlebar Icon, Taskbar Icon & System Tray
+        self._setup_icons_and_tray()
 
         self._cronus = CronusProcess()
         self._build_ui()
@@ -34,8 +54,10 @@ class CronusApp(tk.Tk):
         self._msg_queue: queue.Queue[tuple[str, object]] = queue.Queue()
         self._poll_output_queue()
 
+
+
         # Clean up on window close
-        self.protocol("WM_DELETE_WINDOW", self._on_close)
+        self.protocol("WM_DELETE_WINDOW", self._on_window_close_clicked)
 
         # Ensure window is surfaced to front on launch
         try:
@@ -45,6 +67,190 @@ class CronusApp(tk.Tk):
             self.focus_force()
         except Exception:
             pass
+
+    def _setup_icons_and_tray(self) -> None:
+        """Configure high-DPI window icon, taskbar identity, and system tray icon."""
+        from pathlib import Path
+        pics_dir = Path(r"D:\Codes\CRONUS-ASI\pictures")
+        assets_dir = Path(__file__).resolve().parent / "assets"
+        ico_candidates = [
+            pics_dir / "cronus.ico",
+            pics_dir / "CRONUS.ico",
+            Path(r"D:\Codes\CRONUS-ASI\cronus.ico"),
+            assets_dir / "cronus.ico",
+        ]
+        ico_path = next((p for p in ico_candidates if p.exists()), ico_candidates[0])
+
+        png_candidates = [
+            pics_dir / "CRONUS.png",
+            pics_dir / "cronus.png",
+            Path(r"D:\Codes\CRONUS-ASI\cronus.png"),
+            assets_dir / "cronus.png",
+        ]
+        png_path = next((p for p in png_candidates if p.exists()), png_candidates[0])
+
+        # 1. High-DPI Windows Top-Level Icon & Taskbar Attachment
+        if ico_path.exists():
+            try:
+                self.iconbitmap(default=str(ico_path.resolve()))
+            except Exception:
+                pass
+            self._apply_native_taskbar_icon(ico_path.resolve())
+
+        # 2. Start System Tray in background thread
+        self._tray_icon = None
+        if png_path.exists():
+            self._init_system_tray(png_path)
+
+    def _apply_native_taskbar_icon(self, ico_path) -> None:
+        """Inject native Win32 48x48, 32x32, and 16x16 icon handles and AppUserModelID directly into the OS window frame."""
+        import sys
+        if sys.platform != "win32":
+            return
+        try:
+            import ctypes
+            from ctypes import wintypes
+            user32 = ctypes.windll.user32
+            shell32 = ctypes.windll.shell32
+            self.update_idletasks()
+
+            child_hwnd = self.winfo_id()
+            parent_hwnd = user32.GetAncestor(child_hwnd, 2) or user32.GetParent(child_hwnd) or child_hwnd
+
+            IMAGE_ICON = 1
+            LR_LOADFROMFILE = 0x0010
+            WM_SETICON = 0x0080
+            ICON_SMALL = 0
+            ICON_BIG = 1
+
+            # 1. Load 48x48 (Taskbar / Alt-Tab), 32x32 (Standard), 16x16 (Titlebar / Taskbar Small)
+            hicon_big = user32.LoadImageW(None, str(ico_path), IMAGE_ICON, 48, 48, LR_LOADFROMFILE)
+            if not hicon_big:
+                hicon_big = user32.LoadImageW(None, str(ico_path), IMAGE_ICON, 32, 32, LR_LOADFROMFILE)
+            hicon_sm = user32.LoadImageW(None, str(ico_path), IMAGE_ICON, 16, 16, LR_LOADFROMFILE)
+
+            for hwnd in (parent_hwnd, child_hwnd):
+                if hicon_big:
+                    user32.SendMessageW(hwnd, WM_SETICON, ICON_BIG, hicon_big)
+                if hicon_sm:
+                    user32.SendMessageW(hwnd, WM_SETICON, ICON_SMALL, hicon_sm)
+                try:
+                    set_class = getattr(user32, "SetClassLongPtrW", getattr(user32, "SetClassLongW"))
+                    if hicon_big:
+                        set_class(hwnd, -14, hicon_big)   # GCLP_HICON
+                    if hicon_sm:
+                        set_class(hwnd, -34, hicon_sm)    # GCLP_HICONSM
+                except Exception:
+                    pass
+
+            # 2. Assign PKEY_AppUserModel_ID directly to window's IPropertyStore for Windows 10/11 taskbar binding
+            try:
+                import comtypes
+                from comtypes import GUID, IUnknown, COMMETHOD, HRESULT
+
+                class PROPERTYKEY(ctypes.Structure):
+                    _fields_ = [('fmtid', GUID), ('pid', wintypes.DWORD)]
+
+                class PROPVARIANT(ctypes.Structure):
+                    _fields_ = [
+                        ('vt', wintypes.WORD),
+                        ('wReserved1', wintypes.WORD),
+                        ('wReserved2', wintypes.WORD),
+                        ('wReserved3', wintypes.WORD),
+                        ('pwszVal', wintypes.LPWSTR),
+                        ('dummy', ctypes.c_byte * 8)
+                    ]
+
+                class IPropertyStore(IUnknown):
+                    _iid_ = GUID('{886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99}')
+                    _methods_ = [
+                        COMMETHOD([], HRESULT, 'GetCount', (['out'], ctypes.POINTER(wintypes.DWORD), 'cProps')),
+                        COMMETHOD([], HRESULT, 'GetAt', (['in'], wintypes.DWORD, 'iProp'), (['out'], ctypes.POINTER(PROPERTYKEY), 'pkey')),
+                        COMMETHOD([], HRESULT, 'GetValue', (['in'], ctypes.POINTER(PROPERTYKEY), 'key'), (['out'], ctypes.POINTER(PROPVARIANT), 'pv')),
+                        COMMETHOD([], HRESULT, 'SetValue', (['in'], ctypes.POINTER(PROPERTYKEY), 'key'), (['in'], ctypes.POINTER(PROPVARIANT), 'pv')),
+                        COMMETHOD([], HRESULT, 'Commit')
+                    ]
+
+                pStore = ctypes.POINTER(IPropertyStore)()
+                iid = IPropertyStore._iid_
+                if shell32.SHGetPropertyStoreForWindow(parent_hwnd, ctypes.byref(iid), ctypes.byref(pStore)) == 0 and pStore:
+                    pkey = PROPERTYKEY()
+                    pkey.fmtid = GUID('{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3}')
+                    pkey.pid = 5
+                    pv = PROPVARIANT()
+                    pv.vt = 31  # VT_LPWSTR
+                    pv.pwszVal = "cronus.asi.titan.v1"
+                    pStore.SetValue(ctypes.byref(pkey), ctypes.byref(pv))
+                    pStore.Commit()
+            except Exception:
+                pass
+        except Exception:
+            pass
+
+    def _init_system_tray(self, png_path) -> None:
+        """Initialize background system tray icon near clock."""
+        try:
+            import threading
+            from PIL import Image
+            import pystray
+
+            tray_img = Image.open(png_path).resize((64, 64))
+
+            def on_restore(icon, item):
+                self.after(0, self._restore_window)
+
+            def on_toggle(icon, item):
+                self.after(0, self._on_stop if self._cronus.running else self._on_start)
+
+            def on_exit(icon, item):
+                self.after(0, self._quit_application)
+
+            menu = pystray.Menu(
+                pystray.MenuItem("CRONUS ASI - Sovereign Agent", lambda i, it: None, enabled=False),
+                pystray.MenuItem("Open CRONUS", on_restore, default=True),
+                pystray.MenuItem(lambda it: ("■ Stand Down Titan" if self._cronus.running else "▶ Awaken Titan"), on_toggle),
+                pystray.Menu.SEPARATOR,
+                pystray.MenuItem("Exit CRONUS", on_exit)
+            )
+
+            self._tray_icon = pystray.Icon("CRONUS", tray_img, "CRONUS Super-Intelligence", menu)
+            self._tray_thread = threading.Thread(target=self._tray_icon.run, daemon=True)
+            self._tray_thread.start()
+        except Exception as e:
+            print(f"[CRONUS] System tray notice: {e}")
+
+    def _on_window_close_clicked(self) -> None:
+        """When the window 'X' is clicked, seamlessly minimize to the system tray while keeping Titan online."""
+        self.withdraw()
+        if hasattr(self, "_tray_icon") and self._tray_icon:
+            if not getattr(self, "_notified_tray", False):
+                self._notified_tray = True
+                try:
+                    self._tray_icon.notify(
+                        "CRONUS is active in the background. The Titan remains listening.",
+                        "CRONUS - ASI Online"
+                    )
+                except Exception:
+                    pass
+
+    def _restore_window(self) -> None:
+        """Restore window from system tray and surface to the foreground."""
+        self.deiconify()
+        self.lift()
+        self.attributes("-topmost", True)
+        self.after_idle(self.attributes, "-topmost", False)
+        self.focus_force()
+
+    def _quit_application(self) -> None:
+        """Completely terminate CRONUS, halt background audio/LLM engines, and remove tray icon."""
+        if hasattr(self, "_tray_icon") and self._tray_icon:
+            try:
+                self._tray_icon.stop()
+            except Exception:
+                pass
+        if self._cronus.running:
+            self._cronus.stop()
+        self.destroy()
 
     def _apply_titlebar_theme(self) -> None:
         """Apply shiny metallic gold caption with black text to the Windows title bar."""
@@ -260,9 +466,7 @@ class CronusApp(tk.Tk):
         self._set_state("stopped")
 
     def _on_close(self) -> None:
-        if self._cronus.running:
-            self._cronus.stop()
-        self.destroy()
+        self._quit_application()
 
     def _clear_logs(self) -> None:
         self._log.configure(state=tk.NORMAL)

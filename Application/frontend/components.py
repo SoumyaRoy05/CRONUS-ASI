@@ -177,6 +177,7 @@ class CosmicPurpleBanner(tk.Canvas):
         self._subtitle_text = subtitle
         self._current_w = 940
         self._photo_img: ImageTk.PhotoImage | None = None
+        self._icon_photo: ImageTk.PhotoImage | None = None
         self._right_widget: tk.Widget | None = None
         self._right_window_id: int | None = None
 
@@ -200,6 +201,51 @@ class CosmicPurpleBanner(tk.Canvas):
                 )
             else:
                 self.coords(self._right_window_id, target_x, target_y)
+
+    def _load_emblem_icon(self) -> None:
+        """Load and cache circular gold-framed CRONUS emblem icon."""
+        if getattr(self, "_icon_photo", None) is not None:
+            return
+        self._icon_photo = None
+        try:
+            from pathlib import Path
+            from PIL import Image, ImageDraw, ImageTk
+
+            pics_dir = Path(r"D:\Codes\CRONUS-ASI\pictures")
+            assets_dir = Path(__file__).resolve().parent / "assets"
+            png_candidates = [
+                pics_dir / "CRONUS.png",
+                pics_dir / "cronus.png",
+                Path(r"D:\Codes\CRONUS-ASI\cronus.png"),
+                assets_dir / "cronus.png",
+            ]
+            png_path = next((p for p in png_candidates if p.exists()), png_candidates[0])
+
+            if png_path.exists():
+                im = Image.open(png_path).convert("RGBA")
+                size = 56
+                im = im.resize((size, size), Image.Resampling.LANCZOS)
+
+                # Circular mask
+                mask = Image.new("L", (size, size), 0)
+                mask_draw = ImageDraw.Draw(mask)
+                mask_draw.ellipse((0, 0, size, size), fill=255)
+
+                cropped = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+                cropped.paste(im, (0, 0), mask=mask)
+
+                # Framed avatar with glowing metallic gold ring
+                framed = Image.new("RGBA", (size + 4, size + 4), (0, 0, 0, 0))
+                f_draw = ImageDraw.Draw(framed)
+                # Outer subtle violet glow
+                f_draw.ellipse((0, 0, size + 3, size + 3), outline=(90, 30, 140, 180), width=2)
+                # Inner imperial gold ring
+                f_draw.ellipse((1, 1, size + 2, size + 2), outline=(220, 185, 105, 255), width=2)
+                framed.paste(cropped, (2, 2), mask=cropped)
+
+                self._icon_photo = ImageTk.PhotoImage(framed)
+        except Exception as e:
+            self._icon_photo = None
 
     def _render_cosmic_nebula(self, width: int, height: int) -> Image.Image:
         # Base pure obsidian void: [2, 1, 4] -> profound deep black darkness
@@ -261,11 +307,21 @@ class CosmicPurpleBanner(tk.Canvas):
         self._right_window_id = None
         self.create_image(0, 0, image=self._photo_img, anchor="nw", tags="bg_img")
 
+        # Draw CRONUS Emblem Avatar Icon if available
+        self._load_emblem_icon()
+        if self._icon_photo:
+            self.create_image(20, 12, image=self._icon_photo, anchor="nw", tags="banner_icon")
+            title_x = 94
+            sub_x = 94
+        else:
+            title_x = 28
+            sub_x = 28
+
         # ── 1. Master Title: C R O N U S ──
         title_y = 34
         # Deep cosmic shadow
         self.create_text(
-            29, title_y + 1,
+            title_x + 1, title_y + 1,
             text=self._title_text,
             font=("Segoe UI", 21, "bold"),
             fill="#140526",
@@ -274,7 +330,7 @@ class CosmicPurpleBanner(tk.Canvas):
         )
         # Platinum core title
         self.create_text(
-            28, title_y,
+            title_x, title_y,
             text=self._title_text,
             font=("Segoe UI", 21, "bold"),
             fill="#FFFFFF",
@@ -285,7 +341,7 @@ class CosmicPurpleBanner(tk.Canvas):
         # ── 2. Subtitle: ARTIFICIAL SUPER-INTELLIGENT (ASI) AGENTIC SYSTEM ──
         sub_y = 62
         self.create_text(
-            28, sub_y,
+            sub_x, sub_y,
             text="ARTIFICIAL SUPER-INTELLIGENT (ASI) AGENTIC SYSTEM",
             font=("Consolas", 9, "bold"),
             fill="#D4AF37",
