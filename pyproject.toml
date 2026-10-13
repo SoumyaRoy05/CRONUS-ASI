@@ -1,7 +1,7 @@
 [project]
-name = "atlas-voice-assistant"
+name = "cronus-asi"
 version = "0.1.0"
-description = "Add your description here"
+description = "Cronus Voice Assistant"
 readme = "README.md"
 authors = [
     { name = "Soumyabrata Roy", email = "soumya11roy@gmail.com" }
@@ -40,7 +40,8 @@ url = "https://download.pytorch.org/whl/cu128"
 explicit = true
 
 [project.scripts]
-atlas-voice-assistant = "atlas_voice_assistant:main"
+cronus-asi = "cronus_asi:main"
+cronus = "cronus_asi:main"
 
 [build-system]
 requires = ["uv_build>=0.12.1,<0.13.0"]

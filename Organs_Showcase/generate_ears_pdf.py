@@ -107,7 +107,7 @@ def generate_pdf(output_path: Path):
     # -------------------------------------------------------------------------
     c.setFillColor(colors.HexColor("#0F172A"))
     c.setFont("Helvetica-Bold", 20)
-    c.drawCentredString(PAGE_WIDTH / 2, 1815, "ATLAS VOICE ASSISTANT — EARS (ears.py) ARCHITECTURE FLOWCHART")
+    c.drawCentredString(PAGE_WIDTH / 2, 1815, "CRONUS VOICE ASSISTANT — EARS (ears.py) ARCHITECTURE FLOWCHART")
 
     c.setFillColor(colors.HexColor("#64748B"))
     c.setFont("Helvetica", 10.5)
@@ -199,7 +199,7 @@ def generate_pdf(output_path: Path):
     # -------------------------------------------------------------------------
     # IDLE Branch (Left Column)
     # -------------------------------------------------------------------------
-    draw_node_box(c, 300, 990, 220, 46, ["oww_model.predict(frame)", "Evaluate 'Atlas', 'Buddy', 'Pal'"], "#FEF3C7", "#D97706")
+    draw_node_box(c, 300, 990, 220, 46, ["oww_model.predict(frame)", "Evaluate 'Cronus', 'Atlas', 'Buddy', 'Pal'"], "#FEF3C7", "#D97706")
     draw_polyline_arrow(c, [(510, 1070), (300, 1070), (300, 1013)], colors.HexColor("#D97706"), "state == 'IDLE'", (30, 6))
 
     draw_diamond_node(c, 300, 885, 190, 64, ["Wake score >= 0.6?", "(Trigger Verified)"])

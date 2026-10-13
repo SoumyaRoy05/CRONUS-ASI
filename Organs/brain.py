@@ -1,8 +1,21 @@
+import sys
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 import re
 import sys
 from collections import deque # used for maintaining a history of messages for context
 from pathlib import Path
-from typing import Any, List, TypedDict
+from typing import Any, List
+from typing_extensions import TypedDict
 from dotenv import load_dotenv
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
@@ -175,7 +188,7 @@ class Brain:
     # returns a compiled StateGraph that can be invoked with the BrainState
     def ready_for_processing(self):
         """Graph 1: Ingests user input, formats persona directives, and picks the LLM."""
-        workflow = StateGraph(BrainState)
+        workflow = StateGraph(BrainState)  # type: ignore
 
         # Nodes---
         workflow.add_node("prepare_input", self.prepare_input_node)
@@ -193,7 +206,7 @@ class Brain:
     # returns a compiled StateGraph that can be invoked with the BrainState
     def _build_processing_graph(self):
         """Graph 2: Executes llm.invoke and isolates the raw generated output."""
-        workflow = StateGraph(BrainState)
+        workflow = StateGraph(BrainState)  # type: ignore
 
         # Nodes---
         workflow.add_node("invoke_llm", self.processing_node)
@@ -209,7 +222,7 @@ class Brain:
     # returns a compiled StateGraph that can be invoked with the BrainState
     def ready_to_speak(self):
         """Graph 3: Sanitizes generated text and dispatches directly to mouth.speak."""
-        workflow = StateGraph(BrainState)
+        workflow = StateGraph(BrainState)  # type: ignore
 
         # Nodes---
         workflow.add_node("sanitize_output", self.sanitize_output_node)
@@ -236,7 +249,7 @@ class Brain:
         graph_2 = self._build_processing_graph()
         graph_3 = self.ready_to_speak()
 
-        master = StateGraph(BrainState)
+        master = StateGraph(BrainState)  # type: ignore
 
         # Nodes---
         master.add_node("input_preparation_graph", graph_1)
@@ -260,7 +273,7 @@ class Brain:
     def think(self, user_prompt: str) -> str:
         """Invoked by ears.take_input() to run the complete master cognitive graph."""
 
-        print("\n# ------------- BRAIN is thinking ------------- #")
+        print("\n# ─────────────────── BRAIN is thinking ─────────────────── #")
         print(f"[Brain]---\nReceived user prompt: {user_prompt}", flush=True)
 
         if not user_prompt or not user_prompt.strip():
@@ -276,7 +289,7 @@ class Brain:
         }
 
         # Run the master graph with the initial state and a specific run configuration
-        run_config: RunnableConfig = {"run_name": "Atlas-Master-Cognitive-Turn"}
+        run_config: RunnableConfig = {"run_name": "Cronus-Master-Cognitive-Turn"}
         result = self.graph.invoke(initial_state, config=run_config)
         final_response = result.get("final_response", "")
 

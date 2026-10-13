@@ -1,3 +1,15 @@
+import sys
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 import os
 import sys
 from pathlib import Path
@@ -23,7 +35,7 @@ load_dotenv(dotenv_path=root_dir / ".env")
 if not os.getenv("HF_HOME"):
     local_app_data = os.getenv("LOCALAPPDATA")
     cache_root = Path(local_app_data) if local_app_data else Path.home() / ".cache"
-    os.environ["HF_HOME"] = str(cache_root / "Atlas" / "huggingface")
+    os.environ["HF_HOME"] = str(cache_root / "Cronus" / "huggingface")
 
 
 # -----------------------------------------------------------------------------
@@ -31,27 +43,27 @@ if not os.getenv("HF_HOME"):
 # -----------------------------------------------------------------------------
 from Organs.ears import hear  # Auditory sensory organ: wake word detection + speech-to-text
 from Organs.mouth import speak  # Vocal organ: text-to-speech synthesis
-from Organs.brain import Brain
-from Behaviour.persona import get_wake_receipt
+from Organs.brain import Brain  # Cognitive engine: multi-graph orchestration
+from Behaviour.persona import get_wake_receipt  # Persona & canned receipts
 
 
 # -----------------------------------------------------------------------------
 # 3. Central Nervous System Lifecycle Supervisor
 # -----------------------------------------------------------------------------
 def main() -> None:
-    """Master ignition routine for Atlas.
+    """Master ignition routine for Cronus.
 
     Initializes hardware contexts, boots the acoustic sensory organ,
     and supervises the event loop until clean termination.
     """
     print("\n")
     print("=" * 60)
-    print("               ATLAS DIGITAL STEWARD ONLINE                 ")
+    print("              CRONUS DIGITAL STEWARD ONLINE                 ")
     print("=" * 60)
     print("\n")
 
     try:
-        print("------- Central Nervous System [CNS] Engaged -------")
+        print("# ─────────────────── Central Nervous System [CNS] Engaged ─────────────────── #")
         print("[CNS] Initializing acoustic and cognitive subsystems...")
         print("[CNS] Ignition sequence complete. Acoustic sensory organ active.")
         print("[CNS] Loading the faster-whisper model on your CUDA (float16)...")

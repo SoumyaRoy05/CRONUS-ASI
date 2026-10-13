@@ -20,7 +20,7 @@ How it works
 
 Important class and method
 --------------------------
-Mouth: Represents Atlas's vocal output organ.
+Mouth: Represents Cronus's vocal output organ.
 
 speak(text): Prints, synthesizes, combines, plays, and waits for the supplied response. The brain calls this method after sanitizing the language-model output.
 

@@ -3,7 +3,7 @@ BRAIN ORGAN
 
 Purpose
 -------
-The brain organ is the central reasoning pipeline of Atlas. It receives text from the ears organ, applies the assistant persona, selects an available language model, generates a response, cleans that response for speech, and sends it to the mouth organ.
+The brain organ is the central reasoning pipeline of Cronus. It receives text from the ears organ, applies the assistant persona, selects an available language model, generates a response, cleans that response for speech, and sends it to the mouth organ.
 
 State handled by the brain
 --------------------------

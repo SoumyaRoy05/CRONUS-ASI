@@ -27,7 +27,7 @@ load_dotenv(Path(__file__).resolve().parent / ".env")
 
 gemini_key = os.getenv("GEMINI_API_KEY")
 groq_key = os.getenv("GROQ_API_KEY")
-request_timeout = float(os.getenv("ATLAS_LLM_TIMEOUT", "8"))
+request_timeout = float(os.getenv("CRONUS_LLM_TIMEOUT", os.getenv("ATLAS_LLM_TIMEOUT", "8")))
 
 
 def _secret(value: str | None) -> SecretStr | None:

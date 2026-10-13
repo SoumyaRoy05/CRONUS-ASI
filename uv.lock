@@ -55,71 +55,6 @@ wheels = [
 ]
 
 [[package]]
-name = "atlas-voice-assistant"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "fastapi" },
-    { name = "faster-whisper" },
-    { name = "google-genai" },
-    { name = "ipython" },
-    { name = "kokoro" },
-    { name = "langchain" },
-    { name = "langchain-core" },
-    { name = "langchain-google-genai" },
-    { name = "langchain-groq" },
-    { name = "langchain-ollama" },
-    { name = "numpy" },
-    { name = "ollama" },
-    { name = "openai" },
-    { name = "openwakeword" },
-    { name = "phonemizer" },
-    { name = "python-dotenv" },
-    { name = "pyttsx3" },
-    { name = "reportlab" },
-    { name = "sounddevice" },
-    { name = "torch" },
-    { name = "uvicorn", extra = ["standard"] },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pillow" },
-    { name = "pystray" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastapi", specifier = ">=0.115.0" },
-    { name = "faster-whisper", specifier = ">=1.2.1" },
-    { name = "google-genai", specifier = ">=2.22.0" },
-    { name = "ipython", specifier = ">=9.0.0" },
-    { name = "kokoro", specifier = ">=0.9.4" },
-    { name = "langchain", specifier = ">=1.4.0" },
-    { name = "langchain-core", specifier = ">=1.6.2" },
-    { name = "langchain-google-genai", specifier = ">=4.4.0" },
-    { name = "langchain-groq", specifier = ">=1.1.3" },
-    { name = "langchain-ollama", specifier = ">=1.1.0" },
-    { name = "numpy", specifier = ">=2.5.2" },
-    { name = "ollama", specifier = ">=0.6.2" },
-    { name = "openai", specifier = ">=3.7.0" },
-    { name = "openwakeword", specifier = ">=0.4.0" },
-    { name = "phonemizer", specifier = ">=3.4.0" },
-    { name = "python-dotenv", specifier = ">=1.2.3" },
-    { name = "pyttsx3", specifier = ">=2.99" },
-    { name = "reportlab", specifier = ">=5.0.1" },
-    { name = "sounddevice", specifier = ">=0.5.6" },
-    { name = "torch", specifier = "==2.11.0+cu128", index = "https://download.pytorch.org/whl/cu128" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.34.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pillow", specifier = ">=12.3.0" },
-    { name = "pystray", specifier = ">=0.19.5" },
-]
-
-[[package]]
 name = "attrs"
 version = "26.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -446,6 +381,71 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ca/65/efd0fe8a936fc8ca2978cb7b82581fb20d901c6039e746a808f746b7647b/confection-1.3.3.tar.gz", hash = "sha256:f0f6810d567ff73993fe74d218ca5e1ffb6a44fb03f391257fc5d033546cbfaa", size = 54895, upload-time = "2026-03-24T18:45:24.331Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8d/e4/d66708bdf0d92fb4d49b22cdff4b10cec38aca5dcd7e81d909bb55c65cd7/confection-1.3.3-py3-none-any.whl", hash = "sha256:b9fef9ee84b237ef4611ec3eb5797b70e13063e6310ad9f15536373f5e313c82", size = 35902, upload-time = "2026-03-24T18:45:22.664Z" },
+]
+
+[[package]]
+name = "cronus-asi"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "fastapi" },
+    { name = "faster-whisper" },
+    { name = "google-genai" },
+    { name = "ipython" },
+    { name = "kokoro" },
+    { name = "langchain" },
+    { name = "langchain-core" },
+    { name = "langchain-google-genai" },
+    { name = "langchain-groq" },
+    { name = "langchain-ollama" },
+    { name = "numpy" },
+    { name = "ollama" },
+    { name = "openai" },
+    { name = "openwakeword" },
+    { name = "phonemizer" },
+    { name = "python-dotenv" },
+    { name = "pyttsx3" },
+    { name = "reportlab" },
+    { name = "sounddevice" },
+    { name = "torch" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pillow" },
+    { name = "pystray" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.115.0" },
+    { name = "faster-whisper", specifier = ">=1.2.1" },
+    { name = "google-genai", specifier = ">=2.22.0" },
+    { name = "ipython", specifier = ">=9.0.0" },
+    { name = "kokoro", specifier = ">=0.9.4" },
+    { name = "langchain", specifier = ">=1.4.0" },
+    { name = "langchain-core", specifier = ">=1.6.2" },
+    { name = "langchain-google-genai", specifier = ">=4.4.0" },
+    { name = "langchain-groq", specifier = ">=1.1.3" },
+    { name = "langchain-ollama", specifier = ">=1.1.0" },
+    { name = "numpy", specifier = ">=2.5.2" },
+    { name = "ollama", specifier = ">=0.6.2" },
+    { name = "openai", specifier = ">=3.7.0" },
+    { name = "openwakeword", specifier = ">=0.4.0" },
+    { name = "phonemizer", specifier = ">=3.4.0" },
+    { name = "python-dotenv", specifier = ">=1.2.3" },
+    { name = "pyttsx3", specifier = ">=2.99" },
+    { name = "reportlab", specifier = ">=5.0.1" },
+    { name = "sounddevice", specifier = ">=0.5.6" },
+    { name = "torch", specifier = "==2.11.0+cu128", index = "https://download.pytorch.org/whl/cu128" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.34.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pillow", specifier = ">=12.3.0" },
+    { name = "pystray", specifier = ">=0.19.5" },
 ]
 
 [[package]]

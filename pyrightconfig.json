@@ -1,0 +1,9 @@
+{
+  "venvPath": "D:/Codes/CRONUS-ASI",
+  "venv": ".venv",
+  "extraPaths": [
+    "D:/Codes/CRONUS-ASI"
+  ],
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": "none"
+}

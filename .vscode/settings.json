@@ -1,0 +1,14 @@
+{
+  "python.defaultInterpreterPath": "d:/Codes/ATLAS-Voice_Assistant/.venv/Scripts/python.exe",
+  "python.venvPath": "d:/Codes/ATLAS-Voice_Assistant",
+  "python.venvFolders": [
+    ".venv"
+  ],
+  "python.analysis.extraPaths": [
+    "d:/Codes/ATLAS-Voice_Assistant"
+  ],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingTypeStubs": "none"
+  }
+}

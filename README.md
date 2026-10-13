@@ -1,6 +1,6 @@
-# ATLAS Voice Assistant
+# CRONUS Voice Assistant
 
-ATLAS is a Python voice assistant built around a simple biological metaphor:
+CRONUS is a Python voice assistant built around a simple biological metaphor:
 
 - **Ears** capture microphone audio and transcribe speech - STT.
 - **Brain** prepares the request, selects an available language model, and processes the response through LangGraph.
@@ -12,7 +12,7 @@ The project is designed for a Windows machine with an NVIDIA GPU, but the langua
 
 ```mermaid
 flowchart TD
-	A[atlas.py: CNS controller] --> B[Ears: SoundDevice]
+	A[cronus.py: CNS controller] --> B[Ears: SoundDevice]
 	B --> C[Faster Whisper transcription]
 	C --> D[Transcript returned to CNS]
 	D --> E[Brain: history and prompt]
@@ -40,8 +40,8 @@ The **Master graph** executes those three subgraphs sequentially.
 ## Project structure
 
 ```text
-ATLAS-Voice_Assistant/
-├── atlas.py                   # Central nervous system controller and entry point
+CRONUS-Voice_Assistant/
+├── cronus.py                  # Central nervous system controller and entry point
 ├── llm.py                     # Online/offline LLM selection and fallback chain
 ├── pyproject.toml             # Project metadata and dependencies
 ├── workflow.ipynb             # Notebook that renders graph diagrams as PNGs
@@ -114,10 +114,10 @@ fallback. Providers without a configured API key are skipped. When the
 connectivity probe reports that the machine is offline, Ollama is selected
 directly.
 
-The default timeout can be changed with `ATLAS_LLM_TIMEOUT`:
+The default timeout can be changed with `CRONUS_LLM_TIMEOUT`:
 
 ```powershell
-$env:ATLAS_LLM_TIMEOUT="8"
+$env:CRONUS_LLM_TIMEOUT="8"
 ```
 
 To enable the local fallback, start Ollama and make sure the model is installed:
@@ -127,29 +127,25 @@ ollama serve
 ollama pull qwen2.5:3b
 ```
 
-## Running ATLAS
+## Running CRONUS
 
-Start the local application interface with:
+Start the high-tech desktop command interface with:
 
 ```powershell
 uv run python Application/launcher.py
 ```
 
-The launcher starts the local FastAPI server, waits for it to become ready, and
-opens the Atlas interface in your browser. Keep the launcher terminal open
-while using the interface. Click **Start Atlas** to start the voice assistant,
-and click **Stop Atlas** to stop it. Press `Ctrl+C` in the launcher terminal to
-close the local server.
+The desktop command interface launches with live telemetry, neural audio visualizer, and system controls. Click **IGNITE CRONUS** to engage the voice assistant, and click **ABORT** to stop it.
 
-To run the voice controller directly without the application interface:
+To run the voice controller directly from the terminal without the graphical window:
 
 ```powershell
-uv run python atlas.py
+uv run python cronus.py
 ```
 
-The application initializes the audio and model components, starts microphone listening, transcribes a spoken prompt, sends the completed prompt to the brain, and speaks the response.
+The application initializes hardware acceleration, starts microphone listening, transcribes a spoken prompt, sends the completed prompt to the brain, and speaks the response.
 
-At startup, Atlas speaks one randomized wake response. It then repeats the
+At startup, Cronus speaks one randomized wake response. It then repeats the
 following cycle until interrupted:
 
 ```text
@@ -167,10 +163,10 @@ speech. The CNS then sends the returned transcript to the same Brain and starts
 the next listening cycle.
 
 The Whisper model is loaded once and reused. Brain keeps the latest 40 messages
-in memory, including user requests and Atlas responses. This context is
-cleared when Atlas exits; it is not yet persisted across application restarts.
+in memory, including user requests and Cronus responses. This context is
+cleared when Cronus exits; it is not yet persisted across application restarts.
 
-The current implementation does not use a dedicated wake-word detector. Atlas
+The current implementation does not use a dedicated wake-word detector. Cronus
 speaks its wake response at startup and begins listening immediately.
 
 ## Viewing the graph flowcharts
@@ -234,7 +230,7 @@ The mouth organ always prints the generated response before attempting speech sy
 - Further **tools in the second graph** for LLM processing or thinking
 - Implementation of **RAG (retrieval-augmented generation)** for knowledge retrieval and context-aware responses
 - Further **Behavioural files** will be added to update the tonality and the respose format of the assistant
-- Persistent conversation memory across Atlas restarts
+- Persistent conversation memory across Cronus restarts
 - Token-aware history trimming or summarization
 - A pre-roll audio buffer to preserve the first sounds of a sudden question
 - Dedicated wake-word detection and standby mode

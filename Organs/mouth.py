@@ -1,3 +1,15 @@
+import sys
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 import os
 import sys
 import warnings
@@ -49,7 +61,7 @@ def speak(text: str):
 
     # Use a context manager to ensure the output stream is properly closed after use
     with sd.OutputStream(samplerate=24000, channels=1, dtype="float32") as output:
-        print("\n# ------------- MOUTH is speaking ------------- #", flush=True)
+        print("\n# ─────────────────── MOUTH is speaking ─────────────────── #", flush=True)
         print(f"[Mouth]---\nFinal response: {reply}", flush=True)
     
         for _, _, audio in pipeline(

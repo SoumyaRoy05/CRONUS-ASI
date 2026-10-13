@@ -1,45 +1,48 @@
+"""
+Cronus Desktop Launcher
+Entry point for the Cronus Voice Assistant graphical command interface.
+"""
+
 from __future__ import annotations
 
-import subprocess
 import sys
-import time
-import urllib.error
-import urllib.request
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 from pathlib import Path
 
-def root_dir() -> Path:
-    if getattr(sys, "frozen", False):
-        meipass = getattr(sys, "_MEIPASS", Path(__file__).resolve().parent)
-        return Path(meipass)
-    return Path(__file__).resolve().parent.parent
+# Ensure project root and Application directory are in sys.path
+_app_dir = Path(__file__).resolve().parent
+_root_dir = _app_dir.parent
+for p in (_root_dir, _app_dir):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
 
-PROJECT_ROOT = root_dir()
-HOST = "127.0.0.1"
-PORT = 8765
-BASE_URL = f"http://{HOST}:{PORT}"
+try:
+    from Application.frontend import CronusApp
+except ImportError:
+    from frontend import CronusApp
 
-def backend_is_ready() -> bool:
-    try:
-        with urllib.request.urlopen(f"{BASE_URL}/api/status", timeout=1):
-            return True
-    except Exception:
-        return False
-
-def start_backend() -> subprocess.Popen[bytes] | None:
-    if backend_is_ready():
-        return None
-    cmd = [sys.executable, "-m", "uvicorn", "Application.backend.server:app", "--host", HOST, "--port", str(PORT)]
-    return subprocess.Popen(cmd, cwd=PROJECT_ROOT)
 
 def main() -> None:
-    server = start_backend()
+    print("[CRONUS] Initializing Graphical Command Interface...", flush=True)
     try:
-        if server:
-            server.wait()
-    except KeyboardInterrupt:
-        if server:
-            server.terminate()
-            server.wait(timeout=5)
+        app = CronusApp()
+        print("[CRONUS] Desktop Command Interface online.", flush=True)
+        app.mainloop()
+    except Exception as e:
+        print(f"[CRONUS - Critical Error]: Failed to launch GUI: {e}")
+        import traceback
+        traceback.print_exc()
+
 
 if __name__ == "__main__":
     main()

@@ -1,3 +1,15 @@
+import sys
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 
 import sys
 from pathlib import Path
@@ -70,7 +82,7 @@ def hear(model: WhisperModel | None = None) -> str:
         energy_threshold = calibrate_threshold(audio_queue)
         
         print("Start speaking (session will auto-stop after 4s of silence):\n")
-        print("# ------------- EARS are listening ------------- #")
+        print("# ─────────────────── EARS are listening ─────────────────── #")
         print(f"Calibrated energy threshold: {energy_threshold:.4f}\n")
         
         silence_duration = 0.0
