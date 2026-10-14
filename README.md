@@ -1,4 +1,4 @@
-# CRONUS Voice Assistant
+# CRONUS - Arificial Super-Intelligent(ASI) Agentic System
 
 CRONUS is a Python voice assistant built around a simple biological metaphor:
 
