@@ -31,7 +31,7 @@ if nvidia_dir.exists():
 root_dir = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=root_dir / ".env")
 
-# Route Hugging Face models to a user-specific cache unless explicitly configured.
+# Route Hugging Face models to a creator-specific cache unless explicitly configured.
 if not os.getenv("HF_HOME"):
     local_app_data = os.getenv("LOCALAPPDATA")
     cache_root = Path(local_app_data) if local_app_data else Path.home() / ".cache"

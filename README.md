@@ -37,6 +37,23 @@ The brain is composed of three subgraphs:
   
 The **Master graph** executes those three subgraphs sequentially.
 
+## ⚡ Technologies Used
+
+This project leverages modern AI engineering and runtime technologies. Below is an audit of the technologies currently active in the codebase, detailing where and how they are utilized.
+
+| Technology | Domain | Location in Codebase | How It Is Used |
+| :--- | :--- | :--- | :--- |
+| **LangChain** | LLM Orchestration & Abstraction | [llm.py](llm.py), [Organs/brain.py](Organs/brain.py) | Provides a standardized multi-provider model interface across Groq (ChatGroq), Google Gemini (ChatGoogleGenerativeAI), and local Ollama (ChatOllama). Manages typed message primitives (SystemMessage, HumanMessage, AIMessage), structured outputs, and provider fallback chains with unified invocation logic. |
+| **LangGraph** | Multi-Graph Cognitive Pipeline | [Organs/brain.py](Organs/brain.py), [workflow.ipynb](workflow.ipynb) | Powers the stateful execution graph using StateGraph. Organizes the cognitive cycle into distinct compiled subgraphs (input_preparation_graph, processing_graph, and mouth_output_graph), managing end-to-end state transitions via BrainState and compiling into a sequential master pipeline. |
+| **Pydantic (V2)** | Data Validation & Schema Enforcement | [llm.py](llm.py) | Enforces strict runtime data validation, strong typing, and schema integrity. Utilizes SecretStr for secure API credential handling and establishes deterministic data models for structured inputs and outputs across the system. |
+| **Faster-Whisper** | Speech-to-Text (STT) | [Organs/ears.py](Organs/ears.py) | High-speed, low-latency automatic speech recognition engine built on CTranslate2. Transcribes microphone speech streams with CUDA GPU acceleration, handling ambient noise calibration and speech energy detection. |
+| **Kokoro TTS** | Neural Speech Synthesis | [Organs/mouth.py](Organs/mouth.py) | Deep learning neural text-to-speech engine running locally on PyTorch with CUDA support. Synthesizes human-like, low-latency voice responses from sanitized cognitive output. |
+| **PyTorch (CUDA 12.8)** | Deep Learning Runtime | Environment & Core Models | Powers hardware-accelerated tensor computations on NVIDIA GPUs for both Kokoro neural audio synthesis and local inference operations. |
+| **PySide6 & Pystray** | Desktop GUI & System Tray | [Application/](Application/) | Drives the desktop command interface and operating system background persistence, featuring real-time audio visualizers, telemetry displays, and single-instance system tray controls. |
+
+> **Note on Roadmap Technologies:** Advanced enterprise engineering modules—including **PostgreSQL & pgvector** (hybrid search, fusion & reranking), **Memory Persistence** (AsyncPostgresSaver), **FastAPI & SSE Streaming**, **Docker Sandboxing**, **Ragas & Test Harnesses**, **LangSmith & Langfuse Observability**, and **CI/CD**—will be documented in this section as each respective module is integrated into the active codebase.
+
+
 ## Project structure
 
 ```text
