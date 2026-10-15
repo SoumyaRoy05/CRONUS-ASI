@@ -1,9 +1,9 @@
 """
-Titan Council Package
-Specialized multi-agent cognitive legion operating under the sovereign command of CRONUS ASI.
-Forged for creator Soumya Roy.
+Titan Council Package - Sovereign Multi-Agent Legion
+Operating under the sovereign command of CRONUS ASI for creator Soumya Roy.
 """
 
+# All 6 Titan Agents
 from .Prometheus import (
     Prometheus,
     ArchitecturalBlueprint,
@@ -31,6 +31,23 @@ from .Hyperion import (
     IntelligenceItem,
     IntelligenceDossier,
 )
+from .Helios import (
+    Helios,
+    ScreenAction,
+    ScreenActionType,
+    ScreenCoordinate,
+    ScreenPerceptionResult,
+)
+from .Coeus import (
+    Coeus,
+    MemoryRecord,
+    MemoryRecordType,
+    MemorySearchResult,
+    CheckpointState,
+)
+
+# High Chamber Orchestrator
+from .Chamber import CouncilChamber, CouncilConsensus
 
 __all__ = [
     # Titan Agents
@@ -38,23 +55,33 @@ __all__ = [
     "Atlas",
     "Themis",
     "Hyperion",
-    # Prometheus Schemas
+    "Helios",
+    "Coeus",
+    # Council Chamber Engine
+    "CouncilChamber",
+    "CouncilConsensus",
+    # Schemas
     "ArchitecturalBlueprint",
     "TaskStep",
     "RiskItem",
-    # Atlas Schemas & Tools
     "ToolAction",
     "ToolActionType",
     "StepExecutionResult",
     "ExecutionSummary",
-    # Themis Schemas & Audits
     "AuditCategory",
     "AuditSeverity",
     "AuditFinding",
     "VerificationResult",
     "AuditReport",
-    # Hyperion Schemas & Intelligence
     "ResearchSource",
     "IntelligenceItem",
     "IntelligenceDossier",
+    "ScreenAction",
+    "ScreenActionType",
+    "ScreenCoordinate",
+    "ScreenPerceptionResult",
+    "MemoryRecord",
+    "MemoryRecordType",
+    "MemorySearchResult",
+    "CheckpointState",
 ]
