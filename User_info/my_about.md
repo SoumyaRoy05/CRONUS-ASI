@@ -1,7 +1,7 @@
 # My About
 
 ## Identity
-- Name: Soumya Roy
+- Name: Soumya Roy (Pronounced: "Shoumo Roy")
 - Age: 21
 - Location: India
 - Sex: Male

@@ -9,7 +9,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from pydantic import BaseModel, Field
 
 from .Prometheus import Prometheus, ArchitecturalBlueprint
@@ -18,6 +18,9 @@ from .Themis import Themis
 from .Hyperion import Hyperion
 from .Helios import Helios
 from .Coeus import Coeus
+
+# Unified Single-Voice Mandate: Only CRONUS speaks aloud
+from Organs.mouth import speak
 
 logger = logging.getLogger("CRONUS.TitanCouncil.Chamber")
 
@@ -38,6 +41,7 @@ class CouncilChamber:
     """
     The High Chamber of the Titan Council.
     Coordinates Prometheus, Atlas, Themis, Hyperion, Helios, and Coeus via asyncio.
+    Structured into 4 modular phases with serialized non-blocking milestone speech.
     """
 
     def __init__(
@@ -56,85 +60,119 @@ class CouncilChamber:
         self.helios = helios or Helios()
         self.coeus = coeus or Coeus()
 
-    async def convene(
+    # =========================================================================
+    # PHASE 1: Parallel Context Recall & Intelligence Gathering
+    # =========================================================================
+    async def phase1_gather(
         self,
         directive: str,
-        workspace_context: Optional[str] = None
-    ) -> CouncilConsensus:
-        """
-        Convenes the full Titan Council using asyncio concurrent gathering.
-        Returns the finalized CouncilConsensus with real-time console tracing.
-        """
-        start_time = time.perf_counter()
-        agent_latencies: Dict[str, float] = {}
-
+        workspace_context: Optional[str] = None,
+        title: str = "Sir"
+    ) -> Tuple[Any, str, str, Dict[str, float]]:
+        """Phase 1: Coeus recalls historical memories while Hyperion ingests live technical context."""
+        latencies: Dict[str, float] = {}
         print(f"\n[Council Chamber] ==================================================", flush=True)
-        print(f"[Council Chamber] Convening Titan Council for directive: '{directive}'", flush=True)
-        print(f"[Council Chamber] Phase 1: Tasking [Coeus] (Memory) & [Hyperion] (Intel) in parallel...", flush=True)
+        print(f"[Council Chamber] Phase 1: Initiating Parallel Memory & Intelligence Gathering...", flush=True)
 
-        # ---------------------------------------------------------------------
-        # PHASE 1: Parallel Context Recall & Intelligence Gathering
-        # ---------------------------------------------------------------------
         async def task_coeus():
+            print(f"[TITAN COEUS 🧠]       ──►  Recalling cosmic memory vault & historical state...", flush=True)
             t0 = time.perf_counter()
             mem = await self.coeus.recall(directive, limit=3)
-            agent_latencies["Coeus"] = (time.perf_counter() - t0) * 1000.0
+            latencies["Coeus"] = (time.perf_counter() - t0) * 1000.0
+            
+            # Print completed milestone
+            print(f"[TITAN COEUS 🧠] Memory recalled, {title}.", flush=True)
             return mem
 
         async def task_hyperion():
+            print(f"[TITAN HYPERION ☀️]       ──►  Gathering technical documentation & live intelligence...", flush=True)
             t0 = time.perf_counter()
             dossier = await self.hyperion.deliberate(directive, workspace_context)
-            agent_latencies["Hyperion"] = (time.perf_counter() - t0) * 1000.0
+            latencies["Hyperion"] = (time.perf_counter() - t0) * 1000.0
+            
+            # Print completed milestone
+            print(f"[TITAN HYPERION ☀️] Intelligence gathered, {title}.", flush=True)
             return dossier
 
         memory_res, hyperion_delib = await asyncio.gather(task_coeus(), task_hyperion())
-
         context_summary = f"Memory Matches: {memory_res.total_found}. Hyperion Advice: {hyperion_delib[:100]}..."
 
-        print(f"[Council Chamber] [Coeus] provided memory context ({memory_res.total_found} records) to Council.", flush=True)
-        print(f"[Council Chamber] [Hyperion] provided technical documentation dossier to Council.", flush=True)
-        print(f"[Council Chamber] Phase 2: Dispatching context to [Atlas], [Themis], and [Helios] for peer review...", flush=True)
+        print(f"[Council Chamber] Context synchronization complete.", flush=True)
+        return memory_res, hyperion_delib, context_summary, latencies
 
-        # ---------------------------------------------------------------------
-        # PHASE 2: Parallel Deliberation & Peer Critique
-        # ---------------------------------------------------------------------
+    # =========================================================================
+    # PHASE 2: Parallel Deliberation & Peer Critique
+    # =========================================================================
+    async def phase2_deliberate(
+        self,
+        directive: str,
+        context_summary: str,
+        title: str = "Sir"
+    ) -> Tuple[str, str, str, Dict[str, float]]:
+        """Phase 2: Atlas, Themis, and Helios review the directive and context in parallel."""
+        latencies: Dict[str, float] = {}
+        print(f"[Council Chamber] Phase 2: Dispatching Peer Deliberations...", flush=True)
+
         async def task_atlas():
+            print(f"[TITAN ATLAS 🔨]       ──►  Forging code & validating execution pathways...", flush=True)
             t0 = time.perf_counter()
             res = await self.atlas.deliberate(directive, context_summary)
-            agent_latencies["Atlas"] = (time.perf_counter() - t0) * 1000.0
+            latencies["Atlas"] = (time.perf_counter() - t0) * 1000.0
+            
+            # Print completed milestone
+            print(f"[TITAN ATLAS 🔨] Code forged, {title}.", flush=True)
             return res
 
         async def task_themis():
+            print(f"[TITAN THEMIS ⚖️]       ──►  Auditing AST syntax & security boundaries...", flush=True)
             t0 = time.perf_counter()
             res = await self.themis.deliberate(directive, context_summary)
-            agent_latencies["Themis"] = (time.perf_counter() - t0) * 1000.0
+            latencies["Themis"] = (time.perf_counter() - t0) * 1000.0
+            
+            # Print completed milestone
+            print(f"[TITAN THEMIS ⚖️] Security & AST verified, {title}.", flush=True)
             return res
 
         async def task_helios():
+            print(f"[TITAN HELIOS 👁️]       ──►  Tracking visual display & GUI coordinates...", flush=True)
             t0 = time.perf_counter()
             res = await self.helios.deliberate(directive, context_summary)
-            agent_latencies["Helios"] = (time.perf_counter() - t0) * 1000.0
+            latencies["Helios"] = (time.perf_counter() - t0) * 1000.0
+            
+            # Print completed milestone
+            print(f"[TITAN HELIOS 👁️] Visual coordinates locked, {title}.", flush=True)
             return res
 
         atlas_delib, themis_delib, helios_delib = await asyncio.gather(
             task_atlas(), task_themis(), task_helios()
         )
-
         print(f"[Council Chamber] Peer deliberations synchronized.", flush=True)
-        print(f"[Council Chamber] Phase 3: Tasking [Prometheus] to formulate architectural blueprint...", flush=True)
-        print(f"[Council Chamber] Relaying [Hyperion] docs & [Coeus] memories to [Prometheus]...", flush=True)
+        return atlas_delib, themis_delib, helios_delib, latencies
 
-        # ---------------------------------------------------------------------
-        # PHASE 3: Prometheus Blueprint & Sovereign Synthesis
-        # ---------------------------------------------------------------------
+    # =========================================================================
+    # PHASE 3: Prometheus Blueprint & Sovereign Verification
+    # =========================================================================
+    async def phase3_architect(
+        self,
+        directive: str,
+        context_summary: str,
+        title: str = "Sir"
+    ) -> Tuple[ArchitecturalBlueprint, str, Dict[str, float]]:
+        """Phase 3: Prometheus crafts the Master Blueprint; Themis audits each step for AST safety."""
+        latencies: Dict[str, float] = {}
+        print(f"[Council Chamber] Phase 3: Architecting Master Blueprint...", flush=True)
+        print(f"[TITAN PROMETHEUS 🏛️]       ──►  Architecting master blueprint & decomposing tasks...", flush=True)
+
         t0 = time.perf_counter()
         blueprint = self.prometheus.plan(directive, workspace_context=context_summary)
-        agent_latencies["Prometheus"] = (time.perf_counter() - t0) * 1000.0
+        latencies["Prometheus"] = (time.perf_counter() - t0) * 1000.0
+        
+        # Print completed milestone
+        print(f"[TITAN PROMETHEUS 🏛️] Blueprint architected, {title}.", flush=True)
 
-        print(f"[Prometheus] Master blueprint formulated ({len(blueprint.steps)} execution steps).", flush=True)
-        print(f"[Prometheus] Dispatched blueprint to [Themis] for AST safety verification...", flush=True)
+        print(f"[TITAN THEMIS ⚖️]       ──►  Auditing blueprint AST steps for security...", flush=True)
 
-        # Verify blueprint commands with Themis
+        # Audit blueprint commands with Themis
         audit_verdict = "APPROVED"
         for step in blueprint.steps:
             if getattr(step, "command_or_input", None):
@@ -144,27 +182,40 @@ class CouncilChamber:
                     print(f"[Themis] Step {step.step_id} REJECTED: {audit.summary}", flush=True)
 
         if audit_verdict == "APPROVED":
-            print(f"[Themis] All blueprint steps verified: APPROVED. [Themis] cleared [Atlas] and [Helios] for execution.", flush=True)
+            print(f"[TITAN THEMIS ⚖️] Blueprint verified: APPROVED, {title}.", flush=True)
+        else:
+            print(f"[TITAN THEMIS ⚖️] Blueprint REJECTED under security audit, {title}.", flush=True)
+            speak(
+                f"[serious] Security Alert, {title}: A blueprint step has been quarantined under security audit.",
+                intent="COUNCIL"
+            )
 
+        return blueprint, audit_verdict, latencies
+
+    # =========================================================================
+    # PHASE 4: Council Consensus, Archiving & Sovereign Decree
+    # =========================================================================
+    async def phase4_synthesize(
+        self,
+        directive: str,
+        blueprint: ArchitecturalBlueprint,
+        deliberations: Dict[str, str],
+        audit_verdict: str,
+        agent_latencies: Dict[str, float],
+        start_time: float,
+        title: str = "Sir",
+    ) -> CouncilConsensus:
+        """Phase 4: Synthesize Sovereign Decree, persist to PostgreSQL, and finalize consensus."""
         total_wall_clock_ms = (time.perf_counter() - start_time) * 1000.0
         sequential_sum_ms = sum(agent_latencies.values())
         speedup = sequential_sum_ms / total_wall_clock_ms if total_wall_clock_ms > 0 else 1.0
 
         sovereign_decree = (
-            f"The Council of Titans has converged under CRONUS ASI. "
-            f"Prometheus has forged a {len(blueprint.steps)}-step blueprint. "
-            f"Atlas and Helios stand ready for system and GUI execution, "
-            f"while Themis has audited all safety boundaries."
+            f"The Council of Titans has converged, {title}. "
+            f"Prometheus has architected a {len(blueprint.steps)}-step blueprint. "
+            f"Atlas and Helios stand ready for system and visual execution, "
+            f"while Themis has certified all security boundaries."
         )
-
-        deliberations = {
-            "Hyperion": hyperion_delib,
-            "Atlas": atlas_delib,
-            "Themis": themis_delib,
-            "Helios": helios_delib,
-            "Coeus": f"Recalled {memory_res.total_found} relevant memories.",
-            "Prometheus": blueprint.summary,
-        }
 
         # Archive blueprint and consensus to PostgreSQL
         try:
@@ -183,7 +234,7 @@ class CouncilChamber:
             logger.debug("Database archiving fallback: %s", e)
 
         print(f"[Council Chamber] Consensus reached in {total_wall_clock_ms:.1f}ms (Parallel speedup: {speedup:.2f}x).", flush=True)
-        print(f"[Council Chamber] Decree formulated: {sovereign_decree}", flush=True)
+        print(f"[Council Chamber] Sovereign Decree formulated for {title}.", flush=True)
         print(f"[Council Chamber] ==================================================\n", flush=True)
 
         return CouncilConsensus(
@@ -197,10 +248,63 @@ class CouncilChamber:
             concurrency_speedup=speedup,
         )
 
+    # =========================================================================
+    # UNIFIED CONVENE (Sequential 4-Phase Pipeline)
+    # =========================================================================
+    async def convene(
+        self,
+        directive: str,
+        workspace_context: Optional[str] = None,
+        title: str = "Sir",
+    ) -> CouncilConsensus:
+        """Convenes the full Titan Council through all 4 sequential phases concurrently."""
+        start_time = time.perf_counter()
+        agent_latencies: Dict[str, float] = {}
+
+        # Phase 1
+        memory_res, hyperion_delib, context_summary, p1_latencies = await self.phase1_gather(
+            directive, workspace_context, title=title
+        )
+        agent_latencies.update(p1_latencies)
+
+        # Phase 2
+        atlas_delib, themis_delib, helios_delib, p2_latencies = await self.phase2_deliberate(
+            directive, context_summary, title=title
+        )
+        agent_latencies.update(p2_latencies)
+
+        # Phase 3
+        blueprint, audit_verdict, p3_latencies = await self.phase3_architect(
+            directive, context_summary, title=title
+        )
+        agent_latencies.update(p3_latencies)
+
+        deliberations = {
+            "Hyperion": hyperion_delib,
+            "Atlas": atlas_delib,
+            "Themis": themis_delib,
+            "Helios": helios_delib,
+            "Coeus": f"Recalled {memory_res.total_found} relevant memories.",
+            "Prometheus": blueprint.summary,
+        }
+
+        # Phase 4
+        consensus = await self.phase4_synthesize(
+            directive=directive,
+            blueprint=blueprint,
+            deliberations=deliberations,
+            audit_verdict=audit_verdict,
+            agent_latencies=agent_latencies,
+            start_time=start_time,
+            title=title,
+        )
+        return consensus
+
     def convene_sync(
         self,
         directive: str,
-        workspace_context: Optional[str] = None
+        workspace_context: Optional[str] = None,
+        title: str = "Sir",
     ) -> CouncilConsensus:
         """Synchronous wrapper for convene."""
-        return asyncio.run(self.convene(directive, workspace_context))
+        return asyncio.run(self.convene(directive, workspace_context, title=title))

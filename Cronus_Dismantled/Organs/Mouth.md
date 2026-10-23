@@ -1,12 +1,13 @@
 # Mouth Organ (`Organs/mouth.py`)
 
-The **Mouth** organ provides neural speech synthesis and acoustic vocalization for CRONUS. It utilizes the state-of-the-art **Kokoro-82M** neural TTS model running locally to produce expressive, ultra-realistic human vocal audio.
+The **Mouth** organ provides dual-engine neural speech synthesis and acoustic vocalization for CRONUS. It features **Fish Audio** for cloud streaming zero-shot voice cloning (photorealistic JARVIS voice) with an automatic offline fallback to **Kokoro-82M** (local zero-latency neural TTS).
 
 ---
 
 ## 1. Core Engineering Highlights
 
-* **Neural TTS (Kokoro-82M)**: Uses `kokoro` weights cached locally in the user's Hugging Face model directory (`HF_HOME`), eliminating external network requests during vocalization.
+* **Primary Cloud Engine (Fish Audio)**: Real-time chunked 16-bit PCM streaming via `fish-audio-sdk` with custom voice cloning support (`FISH_AUDIO_VOICE_ID`).
+* **Local Fallback Engine (Kokoro-82M)**: Uses `kokoro` weights cached locally in the user's Hugging Face model directory (`HF_HOME`), eliminating external network requests during vocalization.
 * **American English Phonemization**: Converts input text into phoneme tokens using `phonemizer` with the `a` (American English) language code and the `af_heart` voice profile.
 * **NumPy Audio Concatenation**: Combines streaming audio tensors generated chunk-by-chunk into a seamless 24,000 Hz float32 array.
 * **Low-Latency Streaming Playback**: Employs `sounddevice.play(audio, 24000)` with `sounddevice.wait()` for clear, jitter-free playback.

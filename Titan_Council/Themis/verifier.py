@@ -12,12 +12,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 # Destructive command patterns to block or flag
 DANGEROUS_PATTERNS = [
-    r"rm\s+-rf\s+[/~]",
-    r"del\s+/[sfq]\s+[c-zC-Z]:\\(windows|system32)",
+    r"rm\s+(-[a-zA-Z]*r[a-zA-Z]*f?[a-zA-Z]*\s+)?(\/|~)",  # rm -rf / or rm -rf ~
+    r"del(\s+/[a-zA-Z]+)*\s+([c-zC-Z]:\\|/)?(windows|system32)",  # del with multiple flags targeting system dirs
     r"format\s+[c-zC-Z]:",
     r":\(\)\s*\{\s*:\s*\|\s*:\s*&\s*\}\s*;",  # Fork bomb
     r"drop\s+database",
     r"shred\s+",
+    r"diskpart",
 ]
 
 

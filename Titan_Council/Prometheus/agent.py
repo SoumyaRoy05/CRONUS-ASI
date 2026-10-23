@@ -161,21 +161,14 @@ class Prometheus:
             HumanMessage(content=user_content),
         ]
 
-        # 1. Attempt structured output first
+        # Fast direct invocation with robust resilient JSON extraction
         try:
-            structured_llm = self.llm.with_structured_output(ArchitecturalBlueprint)
-            result = structured_llm.invoke(messages)
-            if isinstance(result, ArchitecturalBlueprint):
-                return result
-            elif isinstance(result, dict):
-                return ArchitecturalBlueprint(**result)
+            response = self.llm.invoke(messages)
+            raw_text = response.content if hasattr(response, "content") else str(response)
+            return self._parse_json_blueprint(raw_text, directive)
         except Exception as e:
-            logger.debug(f"Direct structured output fallback triggered: {e}")
-
-        # 2. Fallback: Direct invocation with robust JSON extraction
-        response = self.llm.invoke(messages)
-        raw_text = response.content if hasattr(response, "content") else str(response)
-        return self._parse_json_blueprint(raw_text, directive)
+            logger.warning(f"Direct blueprint invocation error: {e}")
+            return self._parse_json_blueprint("", directive)
 
     def replan(
         self,
@@ -229,6 +222,28 @@ class Prometheus:
 
         try:
             data = json.loads(clean_text)
+            # Normalize keys for robust parsing
+            data["goal"] = data.get("goal") or data.get("objective") or fallback_goal
+            data["summary"] = data.get("summary") or data.get("overview") or fallback_goal
+            data["architecture_overview"] = data.get("architecture_overview") or data.get("architecture") or "System execution plan."
+            data["files_to_touch"] = data.get("files_to_touch") or []
+            data["risk_matrix"] = data.get("risk_matrix") or []
+            data["estimated_effort"] = data.get("estimated_effort") or "Standard"
+            
+            raw_steps = data.get("steps") or data.get("execution_steps") or []
+            norm_steps = []
+            for idx, s in enumerate(raw_steps, 1):
+                if isinstance(s, dict):
+                    s["step_id"] = s.get("step_id") or idx
+                    s["title"] = s.get("title") or f"Step {idx}"
+                    s["assigned_agent"] = s.get("assigned_agent") or "Atlas"
+                    s["action_type"] = s.get("action_type") or "execute"
+                    s["details"] = s.get("details") or s.get("description") or ""
+                    s["dependencies"] = s.get("dependencies") or []
+                    s["verification_check"] = s.get("verification_check") or "Verified"
+                    s["fallback_plan"] = s.get("fallback_plan") or "Retry"
+                    norm_steps.append(s)
+            data["steps"] = norm_steps
             return ArchitecturalBlueprint(**data)
         except Exception as e:
             logger.warning(f"Prometheus JSON parse failed ({e}), constructing synthesized blueprint.")
