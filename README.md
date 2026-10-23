@@ -44,7 +44,7 @@ This project leverages modern AI engineering and runtime technologies. Below is 
 | Technology | Domain | Location in Codebase | How It Is Used |
 | :--- | :--- | :--- | :--- |
 | **LangChain** | LLM Orchestration & Abstraction | [llm.py](llm.py), [Organs/brain.py](Organs/brain.py) | Provides a standardized multi-provider model interface across Groq (ChatGroq), Google Gemini (ChatGoogleGenerativeAI), and local Ollama (ChatOllama). Manages typed message primitives (SystemMessage, HumanMessage, AIMessage), structured outputs, and provider fallback chains with unified invocation logic. |
-| **LangGraph** | Multi-Graph Cognitive Pipeline | [Organs/brain.py](Organs/brain.py), [workflow.ipynb](workflow.ipynb) | Powers the stateful execution graph using StateGraph. Organizes the cognitive cycle into distinct compiled subgraphs (input_preparation_graph, processing_graph, and mouth_output_graph), managing end-to-end state transitions via BrainState and compiling into a sequential master pipeline. |
+| **LangGraph** | Multi-Graph Cognitive Pipeline | [Organs/brain.py](Organs/brain.py), [Research/workflow.ipynb](Research/workflow.ipynb) | Powers the stateful execution graph using StateGraph. Organizes the cognitive cycle into distinct compiled subgraphs (input_preparation_graph, processing_graph, and mouth_output_graph), managing end-to-end state transitions via BrainState and compiling into a sequential master pipeline. |
 | **Pydantic (V2)** | Data Validation & Schema Enforcement | [llm.py](llm.py) | Enforces strict runtime data validation, strong typing, and schema integrity. Utilizes SecretStr for secure API credential handling and establishes deterministic data models for structured inputs and outputs across the system. |
 | **Faster-Whisper** | Speech-to-Text (STT) | [Organs/ears.py](Organs/ears.py) | High-speed, low-latency automatic speech recognition engine built on CTranslate2. Transcribes microphone speech streams with CUDA GPU acceleration, handling ambient noise calibration and speech energy detection. |
 | **Kokoro TTS** | Neural Speech Synthesis | [Organs/mouth.py](Organs/mouth.py) | Deep learning neural text-to-speech engine running locally on PyTorch with CUDA support. Synthesizes human-like, low-latency voice responses from sanitized cognitive output. |
@@ -60,14 +60,18 @@ CRONUS-Voice_Assistant/
 ├── cronus.py                  # Central nervous system controller and entry point
 ├── llm.py                     # Online/offline LLM selection and fallback chain
 ├── pyproject.toml             # Project metadata and dependencies
-├── workflow.ipynb             # Notebook that renders graph diagrams as PNGs
+├── Research/                  # Exploratory notebooks and graph visualizations
+│   ├── workflow.ipynb         # Notebook that renders graph diagrams as PNGs
+│   └── Research/workflow_images/       # Rendered LangGraph cognitive flowcharts
 ├── Behaviour/
 │   └── persona.py             # Persona prompt and system-state responses
 ├── Organs/
 │   ├── ears.py                # Microphone capture and speech-to-text
 │   ├── brain.py               # LangGraph reasoning pipeline
 │   └── mouth.py               # Text-to-speech output
-├── Info-organs/               # Explanations of the three organ modules
+├── tools/                     # Hardware and audio diagnostic utilities
+│   └── Mic_Check.py           # Microphone input and RMS visualizer
+├── Cronus_Dismantled/         # Complete architectural breakdown and documentation
 └── Organs_Showcase/           # Supporting showcase and PDF generation tools
 ```
 
@@ -179,26 +183,26 @@ speaks its wake response at startup and begins listening immediately.
 
 ## Viewing the graph flowcharts
 
-Open `workflow.ipynb` in VS Code with the Jupyter extension and run its Python cell. It renders four embedded PNG diagrams:
+Open `Research/workflow.ipynb` in VS Code with the Jupyter extension and run its Python cell. It renders four embedded PNG diagrams:
 
 1. Input preparation and LLM selection  
-![Curating the user prompt graph](workflow_images/prepare_input.png)  
+![Curating the user prompt graph](Research/workflow_images/prepare_input.png)  
 2. LLM processing  
-![Main Thinking graph](workflow_images/thinking.png)  
+![Main Thinking graph](Research/workflow_images/thinking.png)  
 3. Sanitization and mouth output  
-![Sending to mouth graph](workflow_images/send_to_mouth.png)  
+![Sending to mouth graph](Research/workflow_images/send_to_mouth.png)  
 4. Complete master graph  
-![Master graph](workflow_images/master_graph.png)  
+![Master graph](Research/workflow_images/master_graph.png)  
 
 The notebook uses LangGraph's PNG renderer directly. Run the cell in VS Code's notebook editor or Interactive Window to see the rendered diagrams.
 
 ## Organ documentation
 
-The `Info-organs` directory contains plain-text explanations of the current organ implementations:
+The `Cronus_Dismantled/Info-organs` directory contains plain-text explanations of the organ implementations:
 
-- `Info-organs/ears.txt`
-- `Info-organs/brain.txt`
-- `Info-organs/mouth.txt`
+- `Cronus_Dismantled/Info-organs/ears.txt`
+- `Cronus_Dismantled/Info-organs/brain.txt`
+- `Cronus_Dismantled/Info-organs/mouth.txt`
 
 ## Troubleshooting
 
