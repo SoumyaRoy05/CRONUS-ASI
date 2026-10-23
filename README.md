@@ -49,7 +49,6 @@ This project leverages modern AI engineering and runtime technologies. Below is 
 | **Faster-Whisper** | Speech-to-Text (STT) | [Organs/ears.py](Organs/ears.py) | High-speed, low-latency automatic speech recognition engine built on CTranslate2. Transcribes microphone speech streams with CUDA GPU acceleration, handling ambient noise calibration and speech energy detection. |
 | **Kokoro TTS** | Neural Speech Synthesis | [Organs/mouth.py](Organs/mouth.py) | Deep learning neural text-to-speech engine running locally on PyTorch with CUDA support. Synthesizes human-like, low-latency voice responses from sanitized cognitive output. |
 | **PyTorch (CUDA 12.8)** | Deep Learning Runtime | Environment & Core Models | Powers hardware-accelerated tensor computations on NVIDIA GPUs for both Kokoro neural audio synthesis and local inference operations. |
-| **PySide6 & Pystray** | Desktop GUI & System Tray | [Application/](Application/) | Drives the desktop command interface and operating system background persistence, featuring real-time audio visualizers, telemetry displays, and single-instance system tray controls. |
 
 > **Note on Roadmap Technologies:** Advanced enterprise engineering modules—including **PostgreSQL & pgvector** (hybrid search, fusion & reranking), **Memory Persistence** (AsyncPostgresSaver), **FastAPI & SSE Streaming**, **Docker Sandboxing**, **Ragas & Test Harnesses**, **LangSmith & Langfuse Observability**, and **CI/CD**—will be documented in this section as each respective module is integrated into the active codebase.
 
@@ -146,15 +145,7 @@ ollama pull qwen2.5:3b
 
 ## Running CRONUS
 
-Start the high-tech desktop command interface with:
-
-```powershell
-uv run python Application/launcher.py
-```
-
-The desktop command interface launches with live telemetry, neural audio visualizer, and system controls. Click **IGNITE CRONUS** to engage the voice assistant, and click **ABORT** to stop it.
-
-To run the voice controller directly from the terminal without the graphical window:
+Run the voice assistant core directly from `cronus.py`:
 
 ```powershell
 uv run python cronus.py

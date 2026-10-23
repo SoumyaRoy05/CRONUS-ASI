@@ -25,9 +25,9 @@ if str(project_root) not in sys.path:
 
 
 SAMPLE_RATE = 16000
-FRAME_DURATION_MS = 100  # 100ms chunks
+FRAME_DURATION_MS = 80   # 80ms chunks for rapid audio streaming
 BLOCK_SIZE = int(SAMPLE_RATE * (FRAME_DURATION_MS / 1000.0))
-PHRASE_PAUSE_SECONDS = 0.6  # Silence pause to trigger instant transcription of a phrase
+PHRASE_PAUSE_SECONDS = 0.3  # Reduced silence pause: triggers near-instant phrase printing (~300ms)
 SESSION_TIMEOUT_SECONDS = 4.0  # Continuous silence to conclude session and return all text
 
 
@@ -83,7 +83,7 @@ def hear(model: WhisperModel | None = None) -> str:
         
         print("\n# ─────────────────── EARS are listening ─────────────────── #")
         print(f"Calibrated energy threshold: {energy_threshold:.4f}")
-        print("Session will auto-stop after 4s of silence after speaking\n")
+        print(f"Session will auto-stop after {SESSION_TIMEOUT_SECONDS}s of silence after speaking\n")
         
         silence_duration = 0.0
         has_spoken_at_least_once = False
@@ -103,7 +103,7 @@ def hear(model: WhisperModel | None = None) -> str:
                 # Voice detected
                 is_speaking = True
                 has_spoken_at_least_once = True
-                silence_duration = 0.0
+                silence_duration = 0.0 # the silence duration is reset to 0 when speech is detected
                 phrase_buffer.append(frame)
             else:
                 # Silence frame
@@ -117,7 +117,7 @@ def hear(model: WhisperModel | None = None) -> str:
                         is_speaking = False
 
                         # Transcribe if accumulated audio is at least 0.4 seconds
-                        if len(phrase_buffer) * (FRAME_DURATION_MS / 1000.0) >= 0.4:
+                        if len(phrase_buffer) * (FRAME_DURATION_MS / 1000.0) >= 0.2:  # Lowered from 0.4s for instant speech catch
                             audio_chunk = np.concatenate(phrase_buffer)
                             segments, _ = model.transcribe(
                                 audio_chunk,
@@ -135,7 +135,7 @@ def hear(model: WhisperModel | None = None) -> str:
 
                 # Session timeout check (triggered after 4s of quiet once speech began)
                 if has_spoken_at_least_once and silence_duration >= SESSION_TIMEOUT_SECONDS:
-                    print("\n\n[4 seconds of silence reached. Session ended.]\n")
+                    print(f"\n\n[{SESSION_TIMEOUT_SECONDS}s of silence reached. Session ended.]\n")
                     break
 
     full_transcript = " ".join(transcript_parts).strip()

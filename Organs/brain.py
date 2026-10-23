@@ -297,6 +297,25 @@ class Brain:
         self.history.append(HumanMessage(content=user_prompt.strip())) # Remember the user prompt in history
         self.history.append(AIMessage(content=final_response)) # Remember the assistant's response in history
 
+        # Background async logging to PostgreSQL (Zero-delay circuit breaker)
+        try:
+            import threading
+            def _async_db_log():
+                try:
+                    from Database import log_dialogue_turn
+                    asyncio.run(
+                        log_dialogue_turn(
+                            user_prompt=user_prompt.strip(),
+                            cleaned_speech_response=final_response,
+                            model_used="CRONUS_LLM_Waterfall",
+                        )
+                    )
+                except Exception:
+                    pass
+            threading.Thread(target=_async_db_log, daemon=True).start()
+        except Exception:
+            pass
+
         return final_response
 
 

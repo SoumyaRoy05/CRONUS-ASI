@@ -45,10 +45,12 @@ def _build_default_executor_llm() -> Any:
     from langchain_groq import ChatGroq
     from langchain_google_genai import ChatGoogleGenerativeAI
     from langchain_ollama import ChatOllama
+    from langchain_openai import ChatOpenAI
     from pydantic import SecretStr
 
     groq_key = os.getenv("GROQ_API_KEY")
     gemini_key = os.getenv("GEMINI_API_KEY")
+    nvidia_key = os.getenv("NVIDIA_API_KEY")
     timeout = max(15.0, float(os.getenv("CRONUS_LLM_TIMEOUT", "15.0")))
 
     candidates = []
@@ -65,15 +67,29 @@ def _build_default_executor_llm() -> Any:
     if gemini_key:
         candidates.append(
             ChatGoogleGenerativeAI(
-                model="gemini-3.8-flash",
+                model="gemini-flash-latest",
                 temperature=0.1,
                 max_tokens=2048,
-                timeout=timeout,
                 google_api_key=SecretStr(gemini_key),
             )
         )
 
-    local_fallback = ChatOllama(model="qwen2.5:3b", temperature=0.1, num_predict=1024)
+    if nvidia_key:
+        try:
+            candidates.append(
+                ChatOpenAI(
+                    model="nvidia/nemotron-3-ultra-550b-a55b",
+                    base_url="https://integrate.api.nvidia.com/v1",
+                    api_key=SecretStr(nvidia_key),
+                    temperature=0.1,
+                    max_tokens=2048,
+                    timeout=timeout,
+                )
+            )
+        except Exception as e:
+            logger.warning("Failed to initialize NVIDIA Nemotron: %s", e)
+
+        local_fallback = ChatOllama(model=os.getenv("OLLAMA_MODEL", "qwen2.5:3b"), temperature=0.1, num_predict=1024)
     active = (candidates + [local_fallback]) if candidates else [local_fallback]
     primary, *fallbacks = active
     if fallbacks:
@@ -199,6 +215,9 @@ class Atlas:
         title = getattr(step, "title", "Task Step")
         action_type = getattr(step, "action_type", "shell_command")
         details = getattr(step, "details", "")
+        print(f"[Atlas] Received Step {step_id} from [Prometheus]: '{title}'", flush=True)
+        if "shell" in action_type.lower() or "command" in action_type.lower():
+            print(f"[Atlas] Executing shell command: '{details.strip()[:60]}'...", flush=True)
 
         start = time.perf_counter()
 
@@ -227,6 +246,7 @@ class Atlas:
         )
 
     async def deliberate(self, blueprint_summary: str, context: Optional[str] = None) -> str:
+        print(f"[Atlas] Deliberating system feasibility & resource containment...", flush=True)
         """
         Deliberates in the Titan Council chamber, assessing execution feasibility.
         """

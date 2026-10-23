@@ -43,10 +43,12 @@ def _build_default_planner_llm() -> Any:
     from langchain_google_genai import ChatGoogleGenerativeAI
     from langchain_groq import ChatGroq
     from langchain_ollama import ChatOllama
+    from langchain_openai import ChatOpenAI
     from pydantic import SecretStr
 
     groq_key = os.getenv("GROQ_API_KEY")
     gemini_key = os.getenv("GEMINI_API_KEY")
+    nvidia_key = os.getenv("NVIDIA_API_KEY")
     timeout = max(20.0, float(os.getenv("CRONUS_LLM_TIMEOUT", "20.0")))
 
     candidates = []
@@ -74,25 +76,38 @@ def _build_default_planner_llm() -> Any:
     if gemini_key:
         candidates.append(
             ChatGoogleGenerativeAI(
-                model="gemini-3.8-flash",
+                model="gemini-flash-latest",
                 temperature=0.2,
                 max_tokens=3072,
-                timeout=timeout,
                 google_api_key=SecretStr(gemini_key),
             )
         )
         candidates.append(
             ChatGoogleGenerativeAI(
-                model="gemini-3.7-flash",
+                model="gemini-pro-latest",
                 temperature=0.2,
                 max_tokens=3072,
-                timeout=timeout,
                 google_api_key=SecretStr(gemini_key),
             )
         )
 
+    if nvidia_key:
+        try:
+            candidates.append(
+                ChatOpenAI(
+                    model="nvidia/nemotron-3-ultra-550b-a55b",
+                    base_url="https://integrate.api.nvidia.com/v1",
+                    api_key=SecretStr(nvidia_key),
+                    temperature=0.2,
+                    max_tokens=3072,
+                    timeout=timeout,
+                )
+            )
+        except Exception as e:
+            logger.warning("Failed to initialize NVIDIA Nemotron: %s", e)
+
     # Local Ollama fallback
-    local_fallback = ChatOllama(model="qwen2.5:3b", temperature=0.2, num_predict=1024)
+    local_fallback = ChatOllama(model=os.getenv("OLLAMA_MODEL", "qwen2.5:3b"), temperature=0.2, num_predict=1024)
 
     active_candidates = (candidates + [local_fallback]) if candidates else [local_fallback]
     primary, *fallbacks = active_candidates
@@ -126,6 +141,7 @@ class Prometheus:
         directive: str,
         workspace_context: Optional[str] = None
     ) -> ArchitecturalBlueprint:
+        print(f"[Prometheus] Formulating architectural blueprint for directive: '{directive}'", flush=True)
         """
         Formulate a comprehensive Master Blueprint and execution graph for a directive.
         """
@@ -167,6 +183,7 @@ class Prometheus:
         failed_step_id: int,
         error_log: str
     ) -> ArchitecturalBlueprint:
+        print(f"[Prometheus] Step {failed_step_id} failed with error: '{error_log[:80]}'. Formulating adaptive recovery blueprint...", flush=True)
         """
         Re-evaluate the blueprint in response to an execution failure, producing a revised plan.
         """
