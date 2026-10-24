@@ -62,7 +62,7 @@ if str(project_root) not in sys.path:
 # zero API credit consumption). You can use any of the curated presets below, or paste ANY model ID
 # from https://fish.audio/discover.
 #
-# Curated Sovereign Presets for CRONUS & The Titan Council:
+# A. SOVEREIGN COUNCIL PRESETS (King of Titans & Cognitive Council)
 VOICE_DARK_KNIGHT     = "e93a33eeed72468192dc41db870d4e42"  # CRONUS (King of Titans - Kevin Conroy / Stoic Vigilant Human ASI)
 VOICE_TITAN_KING      = "591c6f24650a4d8e9b0bd9684fb58844"  # ATLAS (Titan of Endurance - Christopher Judge / Kratos Baritone)
 VOICE_MONUMENTAL      = "5f8f95aa2dc24a8c96a61bf34938f0f0"  # PROMETHEUS (Grand Architect - Peter Cullen / Optimus Prime)
@@ -72,13 +72,25 @@ VOICE_VISIONARY       = "c5f56a6cc2ec4fa8920cb4c5889a3fb7"  # HELIOS (Sun & Visi
 VOICE_COSMIC_OVERLORD = "670f78ba9a2c49feaf5e1eae024d7029"  # COEUS (Intellect & Memory - James Earl Jones Monumental Bass)
 VOICE_ANNOUNCER       = "90e65eaaf50e4470b8e6d43ee6afd7d5"  # Booming Arena Voice (Super Smash Bros - Epic room-filling resonance)
 VOICE_STUDIO_DEFAULT  = None                                  # Default Fish Audio Studio Speaker (Clean neutral male)
-#
-# How to add ANY custom or cloned voice from fish.audio:
+
+# B. ICONIC AI ASSISTANTS & DIGITAL COMPANIONS
+VOICE_JARVIS          = "612b878b113047d9a770c069c8b4fdfe"  # J.A.R.V.I.S. (MCU - Paul Bettany Sophisticated British AI)
+VOICE_GLADOS          = "ee885900b0874d12b1c3439d1e56cc95"  # GLaDOS (Portal - Passive-aggressive, cold synthetic genius)
+VOICE_MASTER_CHIEF    = "93071bfa2ae54d4085034b2924560f9f"  # Master Chief (Halo - Deep heroic Spartan super-soldier)
+VOICE_CYBERPUNK_V     = "40c20f2514ff4869a09ffcc840127f66"  # Cyberpunk Female V (Gritty, confident mercenary)
+
+# C. CINEMA LEGENDS, MONUMENTAL BASS & NARRATORS
+VOICE_MORGAN_FREEMAN  = "76bb6ae7b26c41fbbd484514fdb014c2"  # Morgan Freeman (Omniscient, warm, grandfatherly narration)
+VOICE_ATTENBOROUGH    = "c39a76f685cf4f8fb41cd5d3d66b497d"  # Sir David Attenborough (Master naturalist, awe-inspiring curiosity)
+VOICE_HALO_ANNOUNCER  = "86126c4c4dad4911979556b4569802cd"  # Jeff Steitzer (Halo Reach / Multiplayer Announcer)
+VOICE_DARTH_VADER     = "670f78ba9a2c49feaf5e1eae024d7029"  # Darth Vader (Deep cybernetic Sith Lord resonance)
+
+# How to discover or clone ANY new voice from fish.audio:
 #   Step 1: Visit https://fish.audio/discover (or clone a voice under "Voice Clone" using a 10s audio clip).
-#   Step 2: Click on any voice and copy the Model ID from the URL:
+#   Step 2: Click on any community voice and copy the Model ID from the URL:
 #           Example: https://fish.audio/m/591c6f24650a4d8e9b0bd9684fb58844/
 #           The Model ID is: "591c6f24650a4d8e9b0bd9684fb58844"
-#   Step 3: Assign it to FISH_AUDIO_VOICE_ID in the ACTIVE SELECTION block below.
+#   Step 3: Assign it to FISH_AUDIO_VOICE_ID in the ACTIVE SELECTION block below (or in .env as FISH_AUDIO_VOICE_ID).
 #
 # ----------------------------------------------------------------------------------------------------
 # 2. KOKORO-82M VOICE DIRECTORY (Local Offline Resilient Fallback)
@@ -92,28 +104,45 @@ VOICE_STUDIO_DEFAULT  = None                                  # Default Fish Aud
 #     - 'am_adam'    : Clean, crisp, authoritative male
 #     - 'am_echo'    : Smooth, balanced male
 #     - 'am_michael' : Warm, articulate male
+#     - 'am_eric'    : Grounded, confident broadcast male
+#     - 'am_liam'    : Youthful, agile, energetic male
+#     - 'am_puck'    : Playful, roguish, raspy male
 #
 #   British Male Voices:
-#     - 'bm_daniel'  : Formal, authoritative British male
-#     - 'bm_george'  : Classical British gentleman
+#     - 'bm_daniel'  : Formal, authoritative British male (Royal advisor tone)
+#     - 'bm_george'  : Classical British gentleman (Posh, articulate, warm)
 #     - 'bm_fable'   : Expressive, theatrical British male
+#     - 'bm_lewis'   : Crisp, modern London professional
 #
 #   Female Voices:
-#     - 'af_bella'   : Warm, expressive female
-#     - 'af_sarah'   : Balanced, articulate female
+#     - 'af_bella'   : Warm, expressive female (Ideal assistant / narrator)
+#     - 'af_sarah'   : Balanced, articulate, professional female
 #     - 'af_sky'     : Clear, light, conversational female
+#     - 'af_nicole'  : Gentle, calming, empathetic female
+#     - 'af_alloy'   : Modern, crisp tech assistant
+#     - 'af_aoede'   : Melodic, lyrical storyteller
+#     - 'af_jessica' : Confident, engaging corporate speaker
+#     - 'af_kore'    : Deep, velvety, mysterious female
+#     - 'af_heart'   : Ultra-warm, friendly companion
+#     - 'af_river'   : Contemplative, airy, atmospheric female
 #     - 'bf_emma'    : Formal, articulate British female
+#     - 'bf_isabella': Posh, crisp British narrator
+#     - 'bf_alice'   : Classical literary British reader
+#     - 'bf_lily'    : Soft, intimate British storyteller
 #
 #   Voice Blending:
-#     Blend two voices together with a comma: e.g. 'am_onyx,am_fenrir' (Maximum dark titan bass depth).
-#
+#     Blend two voices together with a comma:
+#       - 'am_onyx,am_fenrir'   : Monumental Dark Titan Bass (Supreme depth)
+#       - 'bm_daniel,bm_george' : Classical Victorian British Butler / J.A.R.V.I.S.
+#       - 'af_bella,af_sky'     : Ethereal, hyper-clear AI companion
+#       - 'am_adam,bm_daniel'   : Transatlantic diplomatic executive
 # ====================================================================================================
 #                                     ACTIVE VOICE SELECTION (CRONUS)
 # ====================================================================================================
 
 # 1. PRIMARY CLOUD VOICE (Fish Audio) — KING OF TITANS
 FISH_AUDIO_BACKEND     = "s2.1-pro-free"        # 100% Free tier backend (Requires NO API credits!)
-FISH_AUDIO_VOICE_ID    = VOICE_DARK_KNIGHT      # Active voice: King of Titans (Kevin Conroy - Stoic Vigilant Human ASI)
+FISH_AUDIO_VOICE_ID    = VOICE_MORGAN_FREEMAN      # Active voice: King of Titans (Kevin Conroy - Stoic Vigilant Human ASI)
 FISH_AUDIO_SPEED       = 1.15                   # Measured, immovable, monumental sovereign cadence
 FISH_AUDIO_SAMPLE_RATE = 44100                  # Studio master audio frequency (44,100 Hz raw 16-bit PCM)
 
@@ -159,8 +188,7 @@ def speak_kokoro(
         pipeline = get_kokoro_pipeline()
         with sd.OutputStream(samplerate=24000, channels=1, dtype="float32") as output:
             print("\n# ─────────────────── MOUTH is speaking (Kokoro Local) ─────────────────── #", flush=True)
-            print(f"[Mouth] Voice: {active_voice} | Speed: {active_speed}x", flush=True)
-            print(f"[Mouth] Final response: {reply}", flush=True)
+            print(f"[CRONUS 👑] [OFFLINE] {reply}", flush=True)
 
             for _, _, audio in pipeline(
                 reply,
@@ -190,12 +218,12 @@ speak_kororo = speak_kokoro
 # -----------------------------------------------------------------------------
 def apply_phonetic_pronunciation(text: str) -> str:
     """Converts words to phonetic equivalents for natural speech synthesis without altering on-screen display.
-    Example: 'Soumya' (Bengali) -> 'Shoumo'.
+    Example: 'Soumya' (Bengali) -> 'Shooumo'.
     """
     if not text:
         return text
     # Replace Soumya with Shoumo (case-insensitive word boundary)
-    phonetic = re.sub(r"\bSoumya\b", "Shoumo", text, flags=re.IGNORECASE)
+    phonetic = re.sub(r"\bSoumya\b", "Shooumo", text, flags=re.IGNORECASE)
     return phonetic
 
 
@@ -242,8 +270,6 @@ def speak_fish_audio(
         req = TTSRequest(**request_kwargs)
 
         backend = os.getenv("FISH_AUDIO_BACKEND", FISH_AUDIO_BACKEND)
-        print("# ─────────────────── MOUTH is speaking (Fish Audio Cloud) ─────────────────── #", flush=True)
-        print(f"[Mouth] Final response: {reply}", flush=True)
 
         with sd.OutputStream(samplerate=sample_rate, channels=1, dtype="int16") as output:
             buffer = bytearray()
@@ -264,7 +290,29 @@ def speak_fish_audio(
         return False
 
 
+# -------------------------------------------------------------- THREAD-SAFE SERIALIZED SPEECH QUEUE & LOCK -------------------------------------------------------------- 
+# Prevents audio collisions / mesh audio when multiple Titans report progress concurrently.
+
+_speech_lock = threading.RLock()
+_speech_queue = queue.Queue()
+_worker_thread = None
+
+
 # -------------------------------------------------------------- MASTER SPEAK ENTRYPOINT -------------------------------------------------------------- 
+
+def wait_until_mouth_silent(timeout: float = 30.0) -> None:
+    """Blocks until mouth speech synthesis and hardware output has completely finished.
+    Includes a 0.65s acoustic drainage buffer so room echoes and sound card buffers clear.
+    """
+    try:
+        if not _speech_queue.empty():
+            _speech_queue.join()
+    except Exception:
+        pass
+    with _speech_lock:
+        pass
+    time.sleep(0.65)
+
 
 def speak(
     text: str,
@@ -285,14 +333,18 @@ def speak(
     if not text or not text.strip():
         return
 
-    # Visual badge and speed configuration by intent
+    # Visual sensory banner and badge (printed once cleanly)
+    # Clean any internal bracket tags (e.g. [calm]) from spoken and displayed text
+    text = re.sub(r"\[[a-zA-Z\s_-]+\]", "", text).strip()
+    print("\n# ─────────────────── MOUTH is speaking ─────────────────── #", flush=True)
     if intent == "REFLEX":
-        print(f"\n[CRONUS ⚡ REFLEX] {text}", flush=True)
+        print(f"[CRONUS 👑] [REFLEX] {text}", flush=True)
         active_speed = speed if speed is not None else float(os.getenv("CRONUS_REFLEX_SPEED", "1.18"))
     elif intent == "COUNCIL":
-        print(f"\n[CRONUS 👑 SOVEREIGN DECREE] {text}", flush=True)
+        print(f"[CRONUS 👑] {text}", flush=True)
         active_speed = speed if speed is not None else float(os.getenv("CRONUS_COUNCIL_SPEED", "1.08"))
     else:
+        print(f"[CRONUS 👑] {text}", flush=True)
         active_speed = speed
 
     # Thread-safe audio lock so no two audio streams ever play concurrently
@@ -314,14 +366,6 @@ def speak(
             return
 
         speak_kororo(text, voice=kokoro_voice, speed=active_speed)
-
-
-# -------------------------------------------------------------- THREAD-SAFE SERIALIZED SPEECH QUEUE -------------------------------------------------------------- 
-# Prevents audio collisions / mesh audio when multiple Titans report progress concurrently.
-
-_speech_lock = threading.RLock()
-_speech_queue = queue.Queue()
-_worker_thread = None
 
 
 def _speech_worker_loop():

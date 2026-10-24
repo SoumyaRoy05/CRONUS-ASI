@@ -14,7 +14,6 @@ import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
-from faster_whisper import WhisperModel
 
 # -----------------------------------------------------------------------------
 # 1. Hardware Acceleration & Dynamic Environment Setup
@@ -26,6 +25,8 @@ if nvidia_dir.exists():
         if bin_folder.is_dir():
             os.add_dll_directory(str(bin_folder))
             os.environ["PATH"] = str(bin_folder) + os.pathsep + os.environ.get("PATH", "")
+
+from faster_whisper import WhisperModel
 
 # Locate and load environment variables from the project root .env
 root_dir = Path(__file__).resolve().parent
@@ -42,7 +43,7 @@ if not os.getenv("HF_HOME"):
 # 2. Sensory Organ Import
 # -----------------------------------------------------------------------------
 from Organs.ears import hear  # Auditory sensory organ: wake word detection + speech-to-text
-from Organs.mouth import speak  # Vocal organ: text-to-speech synthesis
+from Organs.mouth import speak, wait_until_mouth_silent  # Vocal organ + acoustic drainage
 from Organs.brain import Brain  # Cognitive engine: multi-graph orchestration
 from Behaviour.persona import get_wake_receipt  # Persona & canned receipts
 
@@ -50,29 +51,40 @@ from Behaviour.persona import get_wake_receipt  # Persona & canned receipts
 # -----------------------------------------------------------------------------
 # 3. Central Nervous System Lifecycle Supervisor
 # -----------------------------------------------------------------------------
+def _enforce_single_instance():
+    """Guarantees only one instance of CRONUS runs at any time, preventing duplicate voice processes."""
+    try:
+        import ctypes
+        ERROR_ALREADY_EXISTS = 183
+        kernel32 = ctypes.windll.kernel32
+        mutex = kernel32.CreateMutexW(None, False, "CRONUS_SINGLE_INSTANCE_MUTEX")
+        if kernel32.GetLastError() == ERROR_ALREADY_EXISTS:
+            print("\n[CRONUS 👑] [ALERT] Another instance of CRONUS is already active on this system.", flush=True)
+            print("[CRONUS 👑] [ALERT] Terminating duplicate process to prevent overlapping voice output.\n", flush=True)
+            sys.exit(0)
+        return mutex
+    except Exception:
+        return None
+
+
 def main() -> None:
     """Master ignition routine for Cronus.
 
     Initializes hardware contexts, boots the acoustic sensory organ,
     and supervises the event loop until clean termination.
     """
-    print("\n")
-    print("=" * 60)
-    print("              CRONUS DIGITAL STEWARD ONLINE                 ")
-    print("=" * 60)
-    print("\n")
+    _mutex = _enforce_single_instance()
+
+    print("\n", flush=True)
+    print("=" * 60, flush=True)
+    print("              CRONUS DIGITAL STEWARD ONLINE                 ", flush=True)
+    print("=" * 60, flush=True)
+    print("\n", flush=True)
 
     try:
-        print("# ─────────────────── Central Nervous System [CNS] Engaged ─────────────────── #")
-        print("[CNS] Initializing acoustic and cognitive subsystems...")
-        print("[CNS] Ignition sequence complete. Acoustic sensory organ active.")
-        print("[CNS] Loading the faster-whisper model on your CUDA (float16)...")
-
-        # the brain instance stores the mouth function for later use in the conversation loop
-        brain = Brain(mouth=speak)
-        wake_receipt = get_wake_receipt()
-        brain.remember_assistant_message(wake_receipt) # Remember the wake receipt in the brain's history
-        speak(wake_receipt)
+        print("# ─────────────────── Central Nervous System [CNS] Engaged ─────────────────── #", flush=True)
+        print("[CNS] Initializing acoustic and cognitive subsystems...", flush=True)
+        print("[CNS] Loading the faster-whisper model on your CUDA (float16)...", flush=True)
 
         whisper_model = WhisperModel(
             "base.en",
@@ -80,9 +92,19 @@ def main() -> None:
             compute_type="float16",
             local_files_only=True,
         )
+        print("[CNS] Faster-whisper neural model loaded successfully.", flush=True)
+
+        # the brain instance stores the mouth function for later use in the conversation loop
+        brain = Brain(mouth=speak)
+        wake_receipt = get_wake_receipt()
+        brain.remember_assistant_message(wake_receipt) # Remember the wake receipt in the brain's history
+        print("[CNS] Ignition sequence complete. Acoustic sensory organ active.", flush=True)
+        speak(wake_receipt)
 
         # Reuse one Brain and one Whisper model for the complete session.
         while True:
+            # Guarantee physical audio output and room echoes are 100% drained before mic opens
+            wait_until_mouth_silent()
             transcript = hear(whisper_model)
             if transcript:
                 brain.think(transcript)

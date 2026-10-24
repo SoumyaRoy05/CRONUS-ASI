@@ -115,9 +115,9 @@ class Brain:
     # ------------------------------- Sub Functions ------------------------------- #
 
     def _sanitize_for_tts(self, text: str) -> str:
-        """Strips formatting symbols to prevent speech synthesis glitches."""
-        # Preserve Fish Audio performance bracket tags like [calm], [chuckle], [pause]
-        clean = re.sub(r"[\*\_#\>\-`]", "", text)
+        """Strips formatting symbols and leaked bracket tags to prevent speech synthesis glitches."""
+        clean = re.sub(r"\[[a-zA-Z\s_-]+\]", "", text)
+        clean = re.sub(r"[\*\_#\>\-`]", "", clean)
         return " ".join(clean.split()).strip()
 
     def remember_assistant_message(self, message: str) -> None:
@@ -160,7 +160,7 @@ class Brain:
         p_clean = re.sub(r"[^\w\s]", "", raw_prompt).strip().lower()
 
         # 1. 0ms Deterministic micro-bypass for pure greetings
-        pure_greetings = {"hi", "hello", "hey", "greetings", "howdy", "sup", "yo", "good", "morning", "afternoon", "evening", "stand down", "thank you", "thanks", "bye", "goodbye", "good morning", "good afternoon", "good evening", "good night"}
+        pure_greetings = {"hi", "hello", "hey", "greetings", "howdy", "sup", "yo", "good", "morning", "afternoon", "evening", "stand down", "thank you", "thanks", "bye", "goodbye", "good morning", "good afternoon", "good evening", "good night", "yes", "no", "status", "ready", "who are you", "who created you", "who made you", "how are you", "what is your name"}
         words = p_clean.split()
         if p_clean in pure_greetings or (words and len(words) <= 2 and all(w in pure_greetings or w in {"cronus", "buddy", "pal", "sir"} for w in words)):
             print(f"[Brain Cognitive Router] Micro-bypass: Fast REFLEX for '{raw_prompt}'", flush=True)
@@ -470,22 +470,14 @@ class Brain:
         self.history.append(HumanMessage(content=user_prompt.strip()))
         self.history.append(AIMessage(content=final_response))
 
-        # Background async logging to PostgreSQL (Zero-delay circuit breaker)
+        # Background non-blocking logging to PostgreSQL (Zero-delay circuit breaker)
         try:
-            import threading
-            def _async_db_log():
-                try:
-                    from Database import log_dialogue_turn
-                    asyncio.run(
-                        log_dialogue_turn(
-                            user_prompt=user_prompt.strip(),
-                            cleaned_speech_response=final_response,
-                            model_used="CRONUS_LLM_Waterfall",
-                        )
-                    )
-                except Exception:
-                    pass
-            threading.Thread(target=_async_db_log, daemon=True).start()
+            from Database.client import log_dialogue_turn_background
+            log_dialogue_turn_background(
+                user_prompt=user_prompt.strip(),
+                cleaned_speech_response=final_response,
+                model_used="CRONUS_LLM_Waterfall",
+            )
         except Exception:
             pass
 

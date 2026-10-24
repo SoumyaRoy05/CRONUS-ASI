@@ -175,9 +175,11 @@ class CouncilChamber:
         # Audit blueprint commands with Themis
         audit_verdict = "APPROVED"
         for step in blueprint.steps:
-            if getattr(step, "command_or_input", None):
-                audit = self.themis.audit_command(step.command_or_input)
-                if audit.verdict.value == "REJECTED":
+            cmd = getattr(step, "command_or_input", None) or getattr(step, "details", None) or getattr(step, "title", "")
+            if cmd:
+                audit = self.themis.audit_command(str(cmd))
+                verdict_str = str(getattr(audit.verdict, "value", audit.verdict)).upper()
+                if verdict_str == "REJECTED":
                     audit_verdict = "REJECTED"
                     print(f"[Themis] Step {step.step_id} REJECTED: {audit.summary}", flush=True)
 
@@ -210,12 +212,19 @@ class CouncilChamber:
         sequential_sum_ms = sum(agent_latencies.values())
         speedup = sequential_sum_ms / total_wall_clock_ms if total_wall_clock_ms > 0 else 1.0
 
-        sovereign_decree = (
-            f"The Council of Titans has converged, {title}. "
-            f"Prometheus has architected a {len(blueprint.steps)}-step blueprint. "
-            f"Atlas and Helios stand ready for system and visual execution, "
-            f"while Themis has certified all security boundaries."
-        )
+        if audit_verdict == "REJECTED":
+            sovereign_decree = (
+                f"Council deliberation halted, {title}. "
+                f"Themis has exercised a security veto and quarantined the blueprint steps due to destructive command violations. "
+                f"Atlas execution has been suspended to protect the host system."
+            )
+        else:
+            sovereign_decree = (
+                f"The Council of Titans has converged, {title}. "
+                f"Prometheus has architected a {len(blueprint.steps)}-step blueprint. "
+                f"Atlas and Helios stand ready for system and visual execution, "
+                f"while Themis has certified all security boundaries."
+            )
 
         # Archive blueprint and consensus to PostgreSQL
         try:

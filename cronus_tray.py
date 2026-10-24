@@ -84,7 +84,7 @@ try:
             if handle:
                 kernel32.CloseHandle(handle)
                 # Process is already running!
-                print(f"[CRONUS Tray] Instance already running (PID {old_pid}). Exiting duplicate.")
+                print(f"[CRONUS 👑] [TRAY] Instance already running (PID {old_pid}). Exiting duplicate.")
                 sys.exit(0)
         except Exception:
             pass
@@ -171,10 +171,10 @@ def _assistant_worker():
 def _toggle_mute(icon, item):
     if _muted.is_set():
         _muted.clear()
-        print("[CRONUS Tray] Voice listening UNMUTED.")
+        print("[CRONUS 👑] [TRAY] Voice listening UNMUTED.")
     else:
         _muted.set()
-        print("[CRONUS Tray] Voice listening MUTED.")
+        print("[CRONUS 👑] [TRAY] Voice listening MUTED.")
 
 
 def _open_log(icon, item):

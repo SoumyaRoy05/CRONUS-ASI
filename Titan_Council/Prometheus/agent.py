@@ -225,7 +225,11 @@ class Prometheus:
             # Normalize keys for robust parsing
             data["goal"] = data.get("goal") or data.get("objective") or fallback_goal
             data["summary"] = data.get("summary") or data.get("overview") or fallback_goal
-            data["architecture_overview"] = data.get("architecture_overview") or data.get("architecture") or "System execution plan."
+            raw_arch = data.get("architecture_overview") or data.get("architecture") or "System execution plan."
+            if isinstance(raw_arch, (dict, list)):
+                data["architecture_overview"] = json.dumps(raw_arch)
+            else:
+                data["architecture_overview"] = str(raw_arch)
             data["files_to_touch"] = data.get("files_to_touch") or []
             data["risk_matrix"] = data.get("risk_matrix") or []
             data["estimated_effort"] = data.get("estimated_effort") or "Standard"
@@ -243,6 +247,20 @@ class Prometheus:
                     s["verification_check"] = s.get("verification_check") or "Verified"
                     s["fallback_plan"] = s.get("fallback_plan") or "Retry"
                     norm_steps.append(s)
+            
+            # Guarantee no 0-step blueprints: synthesize primary execution step if steps list was empty
+            if not norm_steps:
+                norm_steps.append({
+                    "step_id": 1,
+                    "title": f"Execute: {fallback_goal[:50]}",
+                    "assigned_agent": "Atlas",
+                    "action_type": "execute",
+                    "details": fallback_goal,
+                    "command_or_input": fallback_goal,
+                    "dependencies": [],
+                    "verification_check": "Execution verified",
+                    "fallback_plan": "Adaptive recovery",
+                })
             data["steps"] = norm_steps
             return ArchitecturalBlueprint(**data)
         except Exception as e:

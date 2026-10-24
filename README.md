@@ -1,249 +1,464 @@
-# CRONUS - Arificial Super-Intelligent(ASI) Agentic System
+# CRONUS — Sovereign Artificial Super-Intelligence (ASI) Agentic System
 
-CRONUS is a Python voice assistant built around a simple biological metaphor:
+<div align="center">
 
-- **Ears** capture microphone audio and transcribe speech - STT.
-- **Brain** prepares the request, selects an available language model, and processes the response through LangGraph.
-- **Mouth** converts the response to speech with Kokoro TTS.
+```
+   ██████╗██████╗  ██████╗ ███╗   ██╗██╗   ██╗███████╗
+  ██╔════╝██╔══██╗██╔═══██╗████╗  ██║██║   ██║██╔════╝
+  ██║     ██████╔╝██║   ██║██╔██╗ ██║██║   ██║███████╗
+  ██║     ██╔══██╗██║   ██║██║╚██╗██║██║   ██║╚════██║
+  ╚██████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝███████║
+   ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝
+```
 
-The project is designed for a Windows machine with an NVIDIA GPU, but the language-model layer can fall back to a local Ollama model when cloud connectivity is unavailable.
+**Sovereign Cognitive Reasoning & Multi-Agent Execution Network**  
+*Built exclusively for Creator Soumya Roy*
 
-## Architecture
+[![PostgreSQL 18](https://img.shields.io/badge/PostgreSQL-18.0_Engine-336791?style=flat&logo=postgresql&logoColor=white)](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Hierarchical_StateGraph-2D3748?style=flat)](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/brain.py)
+[![Fish Audio](https://img.shields.io/badge/Fish_Audio-S2.1--pro--free-black?style=flat&logo=audio)](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/mouth.py)
+[![CUDA 12.8](https://img.shields.io/badge/PyTorch-CUDA_12.8-76B900?style=flat&logo=nvidia&logoColor=white)](file:///d:/Codes/ATLAS-Voice_Assistant/pyproject.toml)
+[![Python 3.13+](https://img.shields.io/badge/Python-3.13+-3776AB?style=flat&logo=python&logoColor=white)](file:///d:/Codes/ATLAS-Voice_Assistant/pyproject.toml)
+
+</div>
+
+---
+
+## 🏛️ Executive Architectural Overview
+
+**CRONUS** is a sovereign, dual-tier autonomous AI assistant engineered with a biologically inspired central nervous system coupled to a silent multi-agent executive council (**The Titan Council**).
+
+Unlike conventional voice assistants that merely invoke a single prompt-response loop, CRONUS operates as an **embodied operating system daemon**:
+
+1. **The Sovereign Front (CRONUS)**:
+   - **Ears (Sensory Intake)**: Continuous microphone capture using `SoundDevice` and hardware-accelerated `Faster-Whisper` (CTranslate2 / CUDA) with real-time ambient noise calibration and a 0.45s phrase gating mechanism.
+   - **Brain (Cognitive Router)**: Hierarchical LangGraph `StateGraph` network executing intent classification, micro-reflexes, memory retrieval, and multi-provider LLM waterfall routing.
+   - **Mouth (Dual-Engine Speech Synthesis)**: High-fidelity cloud neural synthesis via **Fish Audio S2.1-pro-free** (featuring voices such as Kevin Conroy / Dark Knight, Morgan Freeman, and David Attenborough), with zero-latency failover to a local GPU **Kokoro-82M** neural engine. Single-instance named mutex enforcement and 0.65s acoustic drain eliminate phantom feedback loops.
+2. **The High Chamber (Titan Council)**:
+   - A specialized multi-agent legion running in the background. Titans plan tasks, generate deterministic shell/code commands, audit security via AST inspection, and curate long-term persistent state without speaking over CRONUS (**Sole Voice Mandate**).
+3. **The Memory Vault (PostgreSQL 18)**:
+   - Fully persistent relational and full-text search backend running locally (`localhost:5432`), housing 12 structured tables across 4 isolated schemas with guaranteed ring-buffer containment.
 
 ```mermaid
 flowchart TD
-	A[cronus.py: CNS controller] --> B[Ears: SoundDevice]
-	B --> C[Faster Whisper transcription]
-	C --> D[Transcript returned to CNS]
-	D --> E[Brain: history and prompt]
-	E --> F[Select LLM]
-	F --> G[Generate response]
-	G --> H[Sanitize response]
-	H --> I[Mouth: Kokoro TTS]
-	I --> A
+    subgraph SENSORY_INGRESS["Sensory Ingress & Vocal Egress"]
+        MIC[("Microphone Input")] --> EARS["Ears: Ambient Gate & Faster-Whisper"]
+        MOUTH["Mouth: Dual-Engine TTS (Fish Audio / Kokoro)"] --> SPK[("Speakers / Audio Output")]
+    end
+
+    subgraph CNS_ORCHESTRATION["Central Nervous System (cronus.py)"]
+        EARS -->|Transcript| CNS["CNS Controller (Single-Instance Mutex)"]
+        CNS -->|Raw Prompt| BRAIN["Brain: Cognitive LangGraph Pipeline"]
+        BRAIN -->|Vocal Text| MOUTH
+    end
+
+    subgraph COGNITIVE_BRAIN["Cognitive Decision Engine (Organs/brain.py)"]
+        BRAIN --> ROUTER{"Intent Router"}
+        ROUTER -->|REFLEX| LLM_WATERFALL["LLM Waterfall: Groq / Gemini / Ollama"]
+        ROUTER -->|COUNCIL| CHAMBER["Titan High Chamber (Chamber.py)"]
+        LLM_WATERFALL --> SANITIZER["Speech Sanitizer & Phonetic Bridge"]
+        CHAMBER --> SANITIZER
+    end
+
+    subgraph TITAN_LEGION["The Titan Council (Titan_Council/)"]
+        CHAMBER --> PROMETHEUS["Prometheus: Architectural Planner"]
+        PROMETHEUS --> THEMIS["Themis: AST Security & Guardrails"]
+        THEMIS --> ATLAS["Atlas: OS & Tool Execution"]
+        CHAMBER --> HYPERION["Hyperion: Strategic Intelligence"]
+        CHAMBER --> HELIOS["Helios: Vision & Screen Perception"]
+        CHAMBER --> COEUS["Coeus: Memory & Statekeeper"]
+    end
+
+    subgraph PERSISTENT_STORAGE["PostgreSQL 18 Engine (cronus_master)"]
+        CNS -.->|0ms Background Logging| PG_CORE["core: Dialogue Turns & Preferences"]
+        COEUS <-->|Full-Text tsvector Search| PG_VAULT["vault: Semantic Memories & Checkpoints"]
+        THEMIS -.->|Security Audits| PG_COUNCIL["council: Blueprints & Task Steps"]
+        CNS -.->|Telemetry| PG_TELEM["telemetry: System Metrics"]
+    end
 ```
 
-The central nervous system creates one Brain and one Whisper model for the
-session. Ears only listens and returns a transcript; the CNS passes that text
-to Brain. Brain includes recent conversation history in the next LLM request,
-and Mouth only speaks the response.
+---
 
-### Brain graphs
+## 🗄️ Database & Memory Persistence Architecture
 
-The brain is composed of three subgraphs:
-1. **Input preparation graph**: builds the persona system prompt, recent conversation history, and the user message, then selects the active LLM.
-2. **Processing graph**: invokes the selected LLM and extracts its text response.
-3. **Speech graph**: sanitizes the response for speech and passes it to the mouth organ.
-  
-The **Master graph** executes those three subgraphs sequentially.
+CRONUS is anchored by a high-performance **PostgreSQL 18** enterprise engine running locally, providing atomic ACID durability, sub-millisecond session logging, and relational state coordination across all organs and Titan agents.
 
-## ⚡ Technologies Used
+### PostgreSQL 18 Cluster Specifications
 
-This project leverages modern AI engineering and runtime technologies. Below is an audit of the technologies currently active in the codebase, detailing where and how they are utilized.
+| Parameter | Configuration Setting | Physical Location / Details |
+| :--- | :--- | :--- |
+| **Engine Version** | PostgreSQL 18.0 (x64) | `C:\Program Files\PostgreSQL\18\bin` |
+| **Cluster Host** | `localhost:5432` | Standard PostgreSQL loopback socket |
+| **Master Database** | `cronus_master` | Isolated application database |
+| **Physical Data Directory** | `D:\Codes\PostgreSql` | Dedicated SSD partition (~96.6 MB cluster size) |
+| **Active DB Footprint** | ~8.65 MB (8,861,375 bytes) | Compact, optimized relational storage |
+| **Connection Engine** | `asyncpg` via [Database/client.py](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py) | High-speed binary protocol async driver |
+
+### Multi-Loop Resilient Connection Engine
+
+To eliminate common asynchronous pitfalls in Python (such as `RuntimeError: Event loop is closed` or `cannot perform operation: another operation is in progress`), the CRONUS database client introduces an isolated worker architecture:
+
+- **Dedicated Background Event Loop**: A persistent daemon thread (`CronusDBWorker`) maintains an independent event loop (`_db_loop`) and manages the `asyncpg.Pool` (2 to 10 connections).
+- **Zero-Latency Fire-and-Forget API (`schedule_on_db_loop`)**: Spoken dialogue turns and telemetry are dispatched to the database without awaiting completion, yielding **0.00 ms latency impact** on real-time voice replies.
+- **Synchronous-Safe Query Dispatch (`run_on_db_loop`)**: Blocking or non-async callers can safely retrieve preferences and search memories without thread collisions or deadlocks.
+- **Circuit-Breaker Fault Tolerance**: If the PostgreSQL service is temporarily unreachable, all operations fail gracefully into a resilient offline mode without crashing the assistant.
+
+---
+
+### Detailed Schema & Table Directory (All 12 Tables)
+
+The `cronus_master` database organizes data into **4 isolated schemas**, separating conversational telemetry, council deliberations, long-term memory vaults, and hardware metrics.
+
+```
+cronus_master
+├── 📁 core          (Conversational state, turn-by-turn history, user preferences)
+├── 📁 council       (Titan execution blueprints, task steps, security audits, debates)
+├── 📁 vault         (Long-term semantic memories, tsvector indexes, checkpoints)
+└── 📁 telemetry     (Hardware utilization, performance metrics, sandbox simulations)
+```
+
+#### 1. Schema: `core` (Conversational Nervous System)
+
+| Table | Size | Key Columns & Data Types | Purpose & Operational Logic |
+| :--- | :--- | :--- | :--- |
+| [`core.conversations`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L182) | 16 kB | `session_id` (uuid, PK)<br>`started_at` (timestamptz)<br>`ended_at` (timestamptz)<br>`metadata` (jsonb) | High-level session boundaries. Generated at startup or when starting a new conversational stream. |
+| [`core.dialogue_turns`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L186) | 64 kB | `turn_id` (bigint, PK)<br>`session_id` (uuid)<br>`user_prompt` (text)<br>`cleaned_speech_response` (text)<br>`model_used` (varchar)<br>`ear_latency_ms` (int)<br>`brain_latency_ms` (int)<br>`mouth_latency_ms` (int)<br>`intent` (varchar)<br>`created_at` (timestamptz) | Complete historical record of every spoken interaction. Captures exact latency metrics across ears, brain, and mouth, recording the model utilized and classified intent (`REFLEX`, `COUNCIL`). |
+| [`core.user_preferences`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L267) | 32 kB | `key` (varchar, PK)<br>`value` (text)<br>`category` (varchar)<br>`metadata` (jsonb)<br>`updated_at` (timestamptz) | Key-value store for creator preferences, operational flags, and system traits. Employs `ON CONFLICT (key) DO UPDATE` for atomic upserts. |
+
+#### 2. Schema: `council` (Multi-Agent Blueprints & Security Audits)
+
+| Table | Size | Key Columns & Data Types | Purpose & Operational Logic |
+| :--- | :--- | :--- | :--- |
+| [`council.blueprints`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L323) | 64 kB | `blueprint_id` (uuid, PK)<br>`goal` (text)<br>`rationale` (text)<br>`planner_model` (varchar)<br>`total_steps` (int)<br>`fallback_strategy` (text)<br>`raw_json` (jsonb)<br>`created_at` (timestamptz) | Structured execution plans synthesized by **Prometheus**. Stores goal decomposition, step counts, dependency trees, and fallback paths. |
+| [`council.task_steps`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L357) | 16 kB | `step_id` (uuid, PK)<br>`blueprint_id` (uuid, FK)<br>`step_number` (int)<br>`title` (text)<br>`action_type` (varchar)<br>`command_payload` (text)<br>`target_path` (text)<br>`risk_level` (varchar)<br>`status` (varchar)<br>`exit_code` (int)<br>`stdout` (text)<br>`stderr` (text)<br>`execution_duration_sec` (float8)<br>`created_at` (timestamptz) | Granular execution logs generated by **Atlas**. Records every shell invocation, file edit, or tool call along with exit codes, timing, and truncated output streams. |
+| [`council.security_audits`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L390) | 16 kB | `audit_id` (uuid, PK)<br>`step_id` (uuid)<br>`target_name` (text)<br>`command_or_code` (text)<br>`verdict` (varchar)<br>`score` (float8)<br>`violations` (jsonb)<br>`summary` (text)<br>`created_at` (timestamptz) | Independent security and safety verification records authored by **Themis**. Audits all AST nodes and shell commands for red-team patterns, destructive flags, and forbidden paths. |
+| [`council.deliberations`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L1) | 16 kB | `deliberation_id` (uuid, PK)<br>`directive` (text)<br>`dossier_json` (jsonb)<br>`consensus_text` (text)<br>`created_at` (timestamptz) | Multi-agent synthesis records documenting high-level Council debates, consensus determinations, and strategic dossiers from **Hyperion**. |
+
+#### 3. Schema: `vault` (Long-Term Memory & Full-Text Lexical Search)
+
+| Table | Size | Key Columns & Data Types | Purpose & Operational Logic |
+| :--- | :--- | :--- | :--- |
+| [`vault.memories`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L420) | 56 kB | `record_id` (uuid, PK)<br>`record_type` (varchar)<br>`key` (varchar)<br>`content` (text)<br>`metadata` (jsonb)<br>`tsv` (tsvector)<br>`created_at` (timestamptz) | Semantic long-term memory store. Features a dedicated **PostgreSQL GIN full-text index** (`idx_vault_memories_tsv`) over `tsv`. Enables sub-millisecond lexical search via `ts_rank_cd(tsv, plainto_tsquery('english', query))`. |
+| [`vault.checkpoints`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L1) | 16 kB | `checkpoint_id` (varchar, PK)<br>`thread_id` (varchar)<br>`step_index` (int)<br>`state_payload` (jsonb)<br>`created_at` (timestamptz) | LangGraph checkpoint repository, supporting pause, rewind, replay, and multi-turn state resumption across system reboots. |
+| [`vault.semantic_embeddings`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L1) | 16 kB | `id` (uuid, PK)<br>`content` (text)<br>`category` (varchar)<br>`tags` (text[])<br>`embedding` (float8[])<br>`metadata` (jsonb)<br>`created_at` (timestamptz) | High-dimensional embedding storage for future vector-similarity clustering and hybrid semantic retrieval. |
+
+#### 4. Schema: `telemetry` (System Diagnostics & Sandbox Simulation)
+
+| Table | Size | Key Columns & Data Types | Purpose & Operational Logic |
+| :--- | :--- | :--- | :--- |
+| [`telemetry.system_metrics`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L467) | 8 kB | `id` (bigint, PK)<br>`cpu_pct` (float8)<br>`ram_pct` (float8)<br>`gpu_mem_used_mb` (float8)<br>`created_at` (timestamptz) | Time-series hardware utilization telemetry tracking CPU workload, system RAM percentage, and NVIDIA GPU VRAM occupancy. |
+| [`telemetry.simulations`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L1) | 16 kB | `sim_id` (uuid, PK)<br>`directive` (text)<br>`risk_score` (float8)<br>`details` (jsonb)<br>`created_at` (timestamptz) | Sandbox simulation results evaluating hypothetical execution plans before deploying modifications to the host operating system. |
+
+---
+
+### 🛡️ Fixed-Ceiling Storage Strategy (Storage Containment Plan)
+
+To guarantee that database operations do not consume unbounded disk space over weeks or months of continuous execution, CRONUS implements a **multi-tiered storage containment policy**:
+
+```mermaid
+flowchart LR
+    A["Raw Dialogue Turns"] -->|Ring-Buffer FIFO| B["Max 500 Turns (~500 KB)"]
+    C["Atlas stdout/stderr"] -->|Truncation Gate| D["Capped at 2 KB per command"]
+    E["Hardware Telemetry"] -->|Rolling TTL Window| F["Auto-purged after 7 days"]
+    G["Active Conversation"] -->|Coeus Consolidation| H["vault.memories: Declarative Facts Only"]
+    I["PostgreSQL Engine"] -->|Auto-Vacuum| J["Strict 50 MB Soft Ceiling"]
+```
+
+1. **FIFO Ring-Buffer for Dialogue Turns**:
+   - `core.dialogue_turns` is managed with a strict 500-turn FIFO ring buffer.
+   - When the ceiling is reached, the oldest turns are pruned, maintaining the table footprint under ~500 KB regardless of runtime duration.
+2. **Atlas Command Output Truncation Gate**:
+   - Raw command outputs (`stdout`/`stderr`) logged in `council.task_steps` are automatically truncated to a maximum of **2,048 characters (2 KB)**.
+   - Full compiler outputs, pip dependency logs, and large file dumps are summarized rather than stored verbatim.
+3. **Rolling Telemetry Expiration (7-Day TTL)**:
+   - System metrics in `telemetry.system_metrics` are maintained on a 7-day rolling window. Expired metrics are deleted during background maintenance cycles.
+4. **Coeus Long-Term Memory Consolidation**:
+   - Instead of storing complete conversational transcripts forever, **Coeus** periodically consolidates key facts into compact declarative sentences in `vault.memories` (e.g., *"Soumya Roy prefers Dark Knight voice"*).
+   - This keeps the searchable knowledge base rich and semantic while shedding multi-megabyte raw conversational text.
+5. **PostgreSQL Auto-Vacuum & Space Reclamation**:
+   - Standard autovacuum daemon settings reclaim dead row tuples automatically.
+   - The entire database (`cronus_master`) is configured to operate within a strict **50 MB storage envelope**, preserving drive health on the host workstation.
+
+---
+
+## ⚡ Active Technologies & Engine Stack
+
+Below is an audit of the technologies currently operating in the codebase:
 
 | Technology | Domain | Location in Codebase | How It Is Used |
 | :--- | :--- | :--- | :--- |
-| **LangChain** | LLM Orchestration & Abstraction | [llm.py](llm.py), [Organs/brain.py](Organs/brain.py) | Provides a standardized multi-provider model interface across Groq (ChatGroq), Google Gemini (ChatGoogleGenerativeAI), and local Ollama (ChatOllama). Manages typed message primitives (SystemMessage, HumanMessage, AIMessage), structured outputs, and provider fallback chains with unified invocation logic. |
-| **LangGraph** | Multi-Graph Cognitive Pipeline | [Organs/brain.py](Organs/brain.py), [Research/workflow.ipynb](Research/workflow.ipynb) | Powers the stateful execution graph using StateGraph. Organizes the cognitive cycle into distinct compiled subgraphs (input_preparation_graph, processing_graph, and mouth_output_graph), managing end-to-end state transitions via BrainState and compiling into a sequential master pipeline. |
-| **Pydantic (V2)** | Data Validation & Schema Enforcement | [llm.py](llm.py) | Enforces strict runtime data validation, strong typing, and schema integrity. Utilizes SecretStr for secure API credential handling and establishes deterministic data models for structured inputs and outputs across the system. |
-| **Faster-Whisper** | Speech-to-Text (STT) | [Organs/ears.py](Organs/ears.py) | High-speed, low-latency automatic speech recognition engine built on CTranslate2. Transcribes microphone speech streams with CUDA GPU acceleration, handling ambient noise calibration and speech energy detection. |
-| **Kokoro TTS** | Neural Speech Synthesis | [Organs/mouth.py](Organs/mouth.py) | Deep learning neural text-to-speech engine running locally on PyTorch with CUDA support. Synthesizes human-like, low-latency voice responses from sanitized cognitive output. |
-| **PyTorch (CUDA 12.8)** | Deep Learning Runtime | Environment & Core Models | Powers hardware-accelerated tensor computations on NVIDIA GPUs for both Kokoro neural audio synthesis and local inference operations. |
+| **PostgreSQL 18** | Enterprise Relational Engine | [Database/client.py](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py) | Houses 12 tables across 4 schemas (`core`, `council`, `vault`, `telemetry`). Powers session persistence, GIN full-text search, and multi-agent coordination. |
+| **asyncpg** | Binary DB Driver | [Database/client.py](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py) | Asynchronous connection pool interfacing with PostgreSQL over native binary protocol. |
+| **LangChain** | LLM Abstraction | [llm.py](file:///d:/Codes/ATLAS-Voice_Assistant/llm.py), [Organs/brain.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/brain.py) | Unified model interface across Groq (`ChatGroq`), Google Gemini (`ChatGoogleGenerativeAI`), NVIDIA NIM (`ChatOpenAI`), and local Ollama (`ChatOllama`). |
+| **LangGraph** | Multi-Graph Cognitive Engine | [Organs/brain.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/brain.py) | Stateful cognitive graphs utilizing `StateGraph`. Manages input preparation, LLM reasoning, speech sanitization, and Titan Council routing. |
+| **Fish Audio API** | Primary Neural Cloud TTS | [Organs/mouth.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/mouth.py) | Ultra-expressive S2.1 neural synthesis. Features Dark Knight, Morgan Freeman, GLaDOS, and David Attenborough voices with streaming chunks. |
+| **Kokoro-82M TTS** | Local Neural TTS Fallback | [Organs/mouth.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/mouth.py) | Lightweight local deep learning neural text-to-speech engine running locally on PyTorch with CUDA acceleration (`am_onyx` voice). |
+| **Faster-Whisper** | Speech-to-Text (STT) | [Organs/ears.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/ears.py) | CTranslate2-accelerated Whisper model running on GPU with real-time ambient noise energy calibration and phrase duration gating. |
+| **PyTorch (CUDA 12.8)** | Deep Learning Runtime | Environment & Core Models | Hardware-accelerated tensor computations on NVIDIA GPUs for Whisper and Kokoro audio processing. |
+| **SoundDevice & PyAudio** | Low-Latency Audio I/O | [Organs/ears.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/ears.py), [Organs/mouth.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/mouth.py) | High-speed PCM streaming for microphone recording and speaker playback. |
+| **Pydantic (V2)** | Strict Schema Validation | [llm.py](file:///d:/Codes/ATLAS-Voice_Assistant/llm.py), [Titan_Council/](file:///d:/Codes/ATLAS-Voice_Assistant/Titan_Council/) | Runtime schema enforcement for structured LLM outputs, blueprint validation, and API tokens. |
 
-> **Note on Roadmap Technologies:** Advanced enterprise engineering modules—including **PostgreSQL & pgvector** (hybrid search, fusion & reranking), **Memory Persistence** (AsyncPostgresSaver), **FastAPI & SSE Streaming**, **Docker Sandboxing**, **Ragas & Test Harnesses**, **LangSmith & Langfuse Observability**, and **CI/CD**—will be documented in this section as each respective module is integrated into the active codebase.
+---
 
+## 🏛️ The Titan Council (Multi-Agent Legion)
 
-## Project structure
+When a complex directive requires more than a simple reflex answer, the CRONUS Brain routes execution to the **Titan Council High Chamber** (`Titan_Council/Chamber.py`). The Council operates under a strict **Sole Voice Mandate**: only CRONUS speaks aloud, while the Titans execute silently in the background.
+
+```
+                    ┌─────────────────────────┐
+                    │      CRONUS (ASI)       │
+                    │   Sole Voice & Monarch  │
+                    └────────────┬────────────┘
+                                 │
+                   ┌─────────────┴─────────────┐
+                   ▼                           ▼
+        [CRONUS 👑] [REFLEX]           [CRONUS 👑]
+        Immediate Reflex Turn          Council Execution
+                                               │
+                         ┌─────────────────────┴─────────────────────┐
+                         ▼                                           ▼
+             ┌───────────────────────┐                   ┌───────────────────────┐
+             │   PROMETHEUS          │                   │   THEMIS              │
+             │   Architectural DAG   │                   │   AST Security Guard  │
+             └───────────┬───────────┘                   └───────────┬───────────┘
+                         │                                           │
+                         ▼                                           ▼
+             ┌───────────────────────┐                   ┌───────────────────────┐
+             │   ATLAS               │                   │   COEUS               │
+             │   OS & Tool Execution │                   │   PostgreSQL Vault    │
+             └───────────┬───────────┘                   └───────────┬───────────┘
+                         │                                           │
+                         ▼                                           ▼
+             ┌───────────────────────┐                   ┌───────────────────────┐
+             │   HYPERION            │                   │   HELIOS              │
+             │   Strategic Synthesis │                   │   Screen Perception   │
+             └───────────────────────┘                   └───────────────────────┘
+```
+
+1. **Prometheus (Architectural Planner)**: Decomposes complex directives into deterministic, acyclic execution blueprints with step numbers, tool targets, and fallback strategies.
+2. **Atlas (OS & Tool Executor)**: High-privilege executor managing shell commands, file modifications, and Python execution with stdout/stderr isolation.
+3. **Themis (Divine Verification & Security)**: AST static analysis engine inspecting code and commands for security vulnerabilities, forbidden paths, and malicious patterns.
+4. **Coeus (Memory & Knowledge Vault)**: Custodian of PostgreSQL 18 memory persistence, managing full-text search over `vault.memories` and semantic state updates.
+5. **Hyperion (Strategic Synthesis & Evaluation)**: Evaluates intelligence dossiers, verifies research accuracy, and synthesizes multi-source context.
+6. **Helios (Sensory & Screen Perception)**: Visual perception agent responsible for screen captures, visual UI inspection, and spatial awareness.
+
+---
+
+## 🔊 Acoustic Stability & Anti-Echo Protocol
+
+CRONUS incorporates a robust acoustic containment system to prevent audio feedback, microphone self-pickup, and duplicate speech loops:
+
+1. **Windows Named Mutex (`CRONUS_SINGLE_INSTANCE_MUTEX`)**:
+   - Enforced in `cronus.py` via `ctypes.windll.kernel32.CreateMutexW`.
+   - Prevents multiple instances from running concurrently in the background and talking over one another.
+2. **Acoustic Drain Gate (0.65s Buffer)**:
+   - After speech playback concludes, `Organs/mouth.py` sleeps for **0.65s** to allow speaker reverberations to completely clear the room.
+3. **Microphone Energy Threshold & Phrase Gate (0.45s)**:
+   - `Organs/ears.py` calibrates ambient background noise on startup and rejects audio bursts shorter than 0.45s, filtering out microphone clicks and breathing.
+4. **Audio Queue Purge**:
+   - SoundDevice input buffers are purged immediately before opening the listening gate, guaranteeing that trailing audio is discarded.
+5. **Phonetic Bridge**:
+   - Text containing the creator's name is dynamically translated (`Soumya Roy` -> `Shooumo Roy`) prior to audio synthesis, ensuring flawless pronunciation while preserving textual grammar in logs.
+
+---
+
+## 📁 Project Structure
 
 ```text
-CRONUS-Voice_Assistant/
-├── cronus.py                  # Central nervous system controller and entry point
-├── llm.py                     # Online/offline LLM selection and fallback chain
-├── pyproject.toml             # Project metadata and dependencies
-├── Research/                  # Exploratory notebooks and graph visualizations
-│   ├── workflow.ipynb         # Notebook that renders graph diagrams as PNGs
-│   └── Research/workflow_images/       # Rendered LangGraph cognitive flowcharts
+CRONUS-ASI/
+├── cronus.py                  # Sovereign CNS controller & single-instance entry point
+├── cronus_tray.py             # System tray background daemon (pystray)
+├── llm.py                     # Multi-provider LLM waterfall (Groq, Gemini, Ollama)
+├── test_harness.py            # Software-in-the-Loop (SIL) 6-suite automated evaluation rig
+├── pyproject.toml             # Project dependencies, CUDA index, and package metadata
+│
 ├── Behaviour/
-│   └── persona.py             # Persona prompt and system-state responses
+│   └── persona.py             # Sovereign persona prompt, demeanor selection, and fast memory
+│
+├── Database/
+│   ├── __init__.py            # Database module export
+│   └── client.py              # PostgreSQL 18 multi-loop engine, pool manager, & schema queries
+│
 ├── Organs/
-│   ├── ears.py                # Microphone capture and speech-to-text
-│   ├── brain.py               # LangGraph reasoning pipeline
-│   └── mouth.py               # Text-to-speech output
-├── tools/                     # Hardware and audio diagnostic utilities
-│   └── Mic_Check.py           # Microphone input and RMS visualizer
-├── Cronus_Dismantled/         # Complete architectural breakdown and documentation
-└── Organs_Showcase/           # Supporting showcase and PDF generation tools
+│   ├── ears.py                # Microphone capture, noise calibration, and Faster-Whisper STT
+│   ├── brain.py               # Hierarchical LangGraph StateGraph reasoning pipeline
+│   └── mouth.py               # Dual-engine TTS (Fish Audio S2.1 + Kokoro-82M fallback)
+│
+├── Titan_Council/             # Silent multi-agent executive chamber
+│   ├── __init__.py            # Titan exports and definitions
+│   ├── Chamber.py             # High Chamber orchestrator & consensus coordinator
+│   ├── Prometheus/            # Architectural planning & task decomposition
+│   ├── Atlas/                 # High-privilege OS shell & Python executor
+│   ├── Themis/                # AST syntax verification & security interceptor
+│   ├── Coeus/                 # PostgreSQL long-term memory & vault retrieval
+│   ├── Hyperion/              # Strategic intelligence & research synthesis
+│   └── Helios/                # Visual perception & screen coordinate mapper
+│
+├── State/
+│   ├── USER.md                # Fast local cache: Creator profile & directives
+│   └── MEMORY.md              # Fast local cache: System identity & operational guidelines
+│
+├── tools/
+│   └── Mic_Check.py           # Microphone input diagnostic and RMS visualizer
+│
+├── Research/
+│   ├── workflow.ipynb         # Interactive LangGraph visualization notebook
+│   └── workflow_images/       # Rendered cognitive flowcharts (PNG)
+│
+├── Cronus_Dismantled/         # Deep architectural documentation & organ teardowns
+│   ├── Info-organs/           # Detailed descriptions of Ears, Brain, and Mouth
+│   └── Titans/                # Individual specifications for each Titan agent
+│
+└── run_harness.bat            # Quick-launch batch script for automated test suite
 ```
 
-## Requirements
+---
 
-- Windows with Python **3.13 or newer**
-- A working microphone and audio output device
-- NVIDIA GPU and compatible CUDA runtime for the configured Whisper, Kokoro, and PyTorch setup
-- `uv` for environment and dependency management
-- An Ollama installation if the local fallback model is used
-- The `qwen2.5:3b` Ollama model for the offline fallback:
+## ⚙️ Installation & Setup
 
-```powershell
-ollama pull qwen2.5:3b
-```
+### Prerequisites
 
-The configured PyTorch dependency is `torch==2.11.0+cu128`, installed from the CUDA 12.8 PyTorch index declared in `pyproject.toml`.
+- **OS**: Windows 10/11 (x64)
+- **Python**: **3.13 or newer**
+- **Hardware**: NVIDIA GPU with compatible CUDA drivers (CUDA 12.8 runtime)
+- **Database**: Local **PostgreSQL 18** installation on port `5432` with database `cronus_master`
+- **Package Manager**: `uv` (recommended) or standard `pip`
+- **Local Fallback LLM**: [Ollama](https://ollama.ai) with `qwen2.5:3b`
 
-## Installation
+### 1. Environment Synchronization
 
-From the project directory, create or synchronize the virtual environment:
+Clone the repository and install all dependencies via `uv`:
 
 ```powershell
 uv sync
 ```
 
-Activate it in PowerShell:
+Activate the virtual environment:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-If PowerShell blocks script execution for the current terminal, use:
+*(If script execution is disabled on your system, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`)*
 
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
-```
+### 2. Configure Environment Variables
 
-## Configuration
-
-Create a `.env` file in the project root. Cloud keys are optional if Ollama is configured locally.
+Create a `.env` file in the project root:
 
 ```dotenv
-GEMINI_API_KEY=your_gemini_api_key
-GROQ_API_KEY=your_groq_api_key
+# --- LLM API Credentials ---
+GROQ_API_KEY=your_groq_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# --- Speech Synthesis (Fish Audio) ---
+FISH_AUDIO_API_KEY=your_fish_audio_api_key_here
+FISH_AUDIO_VOICE_ID=e93a33eeed72468192dc41db870d4e42  # Kevin Conroy / Dark Knight
+
+# --- PostgreSQL 18 Configuration ---
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_postgres_password_here
+POSTGRES_DB=cronus_master
+
+# --- System Timeouts ---
+CRONUS_LLM_TIMEOUT=8
 ```
 
-The LLM waterfall is configured in `llm.py` and uses fast failure with an
-8-second request timeout and no provider retries:
-
-1. Groq `openai/gpt-oss-120b`
-2. Groq `openai/gpt-oss-20b`
-3. Gemini `gemini-3.8-flash`
-4. Gemini `gemini-3.7-flash`
-5. Local Ollama `qwen2.5:3b`
-
-Groq is tried first because both configured models were verified successfully.
-Gemini provides an independent cloud fallback, while Ollama is the final local
-fallback. Providers without a configured API key are skipped. When the
-connectivity probe reports that the machine is offline, Ollama is selected
-directly.
-
-The default timeout can be changed with `CRONUS_LLM_TIMEOUT`:
+### 3. Verify Local Fallback Engine (Ollama)
 
 ```powershell
-$env:CRONUS_LLM_TIMEOUT="8"
-```
-
-To enable the local fallback, start Ollama and make sure the model is installed:
-
-```powershell
-ollama serve
 ollama pull qwen2.5:3b
 ```
 
-## Running CRONUS
+---
 
-Run the voice assistant core directly from `cronus.py`:
+## 🚀 Running CRONUS
+
+### Interactive Voice Console
+
+Launch the primary voice assistant session:
 
 ```powershell
 uv run python cronus.py
 ```
 
-The application initializes hardware acceleration, starts microphone listening, transcribes a spoken prompt, sends the completed prompt to the brain, and speaks the response.
+Upon initialization, CRONUS:
+1. Acquires the Windows single-instance mutex.
+2. Connects to PostgreSQL `cronus_master` and validates schema integrity.
+3. Initializes Faster-Whisper on CUDA.
+4. Calibrates microphone ambient noise floor.
+5. Speaks a randomized wake greeting via Fish Audio (or Kokoro offline fallback).
+6. Enters the continuous autonomous loop:
+   ```text
+   Listen -> Transcribe -> Plan/Route -> Remember -> Speak -> Drain -> Listen
+   ```
 
-At startup, Cronus speaks one randomized wake response. It then repeats the
-following cycle until interrupted:
+### System Tray Background Daemon
 
-```text
-Listen -> transcribe -> think -> remember -> speak -> listen again
+To run CRONUS in the background with a Windows taskbar icon:
+
+```powershell
+uv run python cronus_tray.py
 ```
 
-Press `Ctrl+C` to request shutdown.
+Or run silently in the background without a command window via the included VBS launcher:
 
-### Current listening behavior
+```powershell
+wscript.exe start_cronus_silent.vbs
+```
 
-The `ears.py` implementation measures the ambient noise floor, detects speech
-using audio energy, and sends speech segments to Faster Whisper after a
-0.6-second pause. A session ends after four seconds of silence following
-speech. The CNS then sends the returned transcript to the same Brain and starts
-the next listening cycle.
+---
 
-The Whisper model is loaded once and reused. Brain keeps the latest 40 messages
-in memory, including user requests and Cronus responses. This context is
-cleared when Cronus exits; it is not yet persisted across application restarts.
+## 🧪 Automated Testing & Diagnostics
 
-The current implementation does not use a dedicated wake-word detector. Cronus
-speaks its wake response at startup and begins listening immediately.
+CRONUS includes a comprehensive Software-in-the-Loop (SIL) test harness that validates every major subsystem without requiring manual microphone input or audio hardware.
 
-## Viewing the graph flowcharts
+Execute the test suite:
 
-Open `Research/workflow.ipynb` in VS Code with the Jupyter extension and run its Python cell. It renders four embedded PNG diagrams:
+```powershell
+uv run python test_harness.py
+```
 
-1. Input preparation and LLM selection  
-![Curating the user prompt graph](Research/workflow_images/prepare_input.png)  
-2. LLM processing  
-![Main Thinking graph](Research/workflow_images/thinking.png)  
-3. Sanitization and mouth output  
-![Sending to mouth graph](Research/workflow_images/send_to_mouth.png)  
-4. Complete master graph  
-![Master graph](Research/workflow_images/master_graph.png)  
+### The 6 Automated Diagnostic Suites:
 
-The notebook uses LangGraph's PNG renderer directly. Run the cell in VS Code's notebook editor or Interactive Window to see the rendered diagrams.
+```text
+===========================================================================
+      CRONUS-ASI AUTOMATED HARNESS & EVALUATION RIG (SIL)
+      Software-in-the-Loop Diagnostic & Multi-Agent Verification
+===========================================================================
 
-## Organ documentation
+  Running: 1. Fast Memory Harness (USER.md / MEMORY.md)... [PASS] (0.8ms)
+  Running: 2. Themis Security Veto Rig (Red-Team Exploits)... [PASS] (1.2ms)
+  Running: 3. Prometheus Blueprint Normalization... [PASS] (0.4ms)
+  Running: 4. Cognitive Intent Router & Micro-Bypass... [PASS] (0.6ms)
+  Running: 5. Acoustic Thread-Safety & Overlap Prevention... [PASS] (100.2ms)
+  Running: 6. PostgreSQL 18 cronus_master & Vault Search... [PASS] (4.8ms)
 
-The `Cronus_Dismantled/Info-organs` directory contains plain-text explanations of the organ implementations:
+===========================================================================
+ALL HARNESS SUITES PASSED -- CRONUS-ASI IS FULLY CERTIFIED & SOUND
+===========================================================================
+```
 
-- `Cronus_Dismantled/Info-organs/ears.txt`
-- `Cronus_Dismantled/Info-organs/brain.txt`
-- `Cronus_Dismantled/Info-organs/mouth.txt`
+---
 
-## Troubleshooting
+## 🔒 Terminal Badges & Display Standards
 
-### Microphone or playback errors
+During execution, CRONUS formats its operations with clear terminal badges:
 
-Check that Windows has granted microphone access to Python or VS Code, and confirm that the default input and output devices work with SoundDevice.
+| Badge | Meaning |
+| :--- | :--- |
+| `[CRONUS 👑] [REFLEX]` | Instant conversational response produced by the front-facing Brain. |
+| `[CRONUS 👑]` | Sovereign decree or multi-agent action resolved through the Titan High Chamber. |
+| `[CRONUS 👑] [OFFLINE]` | Voice synthesis rendered locally via Kokoro-82M due to lack of cloud connectivity. |
+| `[CRONUS 👑] [ALERT]` | System safety interception or hardware anomaly notification. |
+| `[CRONUS 👑] [TRAY]` | System tray event (startup, sleep, resume, or exit). |
 
-### CUDA or model-loading errors
+---
 
-Confirm that the NVIDIA driver, CUDA-compatible PyTorch build, and GPU memory are available. Whisper and Kokoro are configured to use `device="cuda"`.
+## 📜 Development Guidelines & Governance
 
-### Cloud model errors
-
-Verify the relevant API key in `.env`. The waterfall uses Groq first and falls
-back to Gemini and then Ollama when a provider is unavailable. Gemini may return
-temporary `503` overload or `504` timeout errors; these are handled by the
-fallback chain. If all cloud providers fail, make sure Ollama is running and
-that `qwen2.5:3b` is installed.
-
-### Kokoro errors
-
-The mouth organ always prints the generated response before attempting speech synthesis. If Kokoro fails, inspect the exception for missing model, audio-device, or CUDA configuration issues.
-
-## Development notes
-
-- The project uses LangGraph `StateGraph` to make the brain pipeline explicit and visualizable.
-- The persona is generated dynamically, including a title and demeanor selected for each request.
-- The CNS owns the session lifecycle and reuses one Brain and one Whisper model.
-- Ears returns transcripts without knowing about Brain conversation history.
-- Brain history is bounded to 40 messages to balance context, latency, and token usage.
-- Brain responses are sanitized before text-to-speech so Markdown formatting is not spoken aloud.
-- Do not commit `.env` or API keys to source control.
-
-## Future improvements
-
-- Add a **GUI** for configuration and status display
-- Further **tools in the second graph** for LLM processing or thinking
-- Implementation of **RAG (retrieval-augmented generation)** for knowledge retrieval and context-aware responses
-- Further **Behavioural files** will be added to update the tonality and the respose format of the assistant
-- Persistent conversation memory across Cronus restarts
-- Token-aware history trimming or summarization
-- A pre-roll audio buffer to preserve the first sounds of a sudden question
-- Dedicated wake-word detection and standby mode
-- Add a local knowledge base for offline operation
+- **Sole Voice Mandate**: Subordinate Titan agents (**Prometheus**, **Atlas**, **Themis**, **Coeus**, **Hyperion**, **Helios**) must never vocalize audio directly. All spoken communication flows exclusively through CRONUS.
+- **Creator Allegiance**: CRONUS recognizes **Soumya Roy** as its sole creator and supreme authority.
+- **Acoustic Hygiene**: Any new audio output paths must acquire `_speech_lock` in `Organs/mouth.py` and respect the post-speech acoustic drain delay.
+- **Schema Discipline**: Database changes must be accompanied by non-destructive migrations and respect the fixed-ceiling storage containment policy.

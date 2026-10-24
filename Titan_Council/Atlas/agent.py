@@ -57,7 +57,7 @@ def _build_default_executor_llm() -> Any:
     if groq_key:
         candidates.append(
             ChatGroq(
-                model="openai/gpt-oss-120b",
+                model="qwen/qwen3.8-27b",
                 temperature=0.1,
                 max_tokens=2048,
                 timeout=timeout,

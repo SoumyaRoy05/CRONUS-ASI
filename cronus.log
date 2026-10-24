@@ -1,0 +1,18 @@
+
+============================================================
+          CRONUS JARVIS SYSTEM TRAY DAEMON ONLINE          
+============================================================
+
+[CNS] Initializing acoustic and cognitive subsystems in background...
+
+# ─────────────────── MOUTH is speaking ─────────────────── #
+[Mouth] Final response: At your service, Mr Roy.
+[CNS] Loading Faster-Whisper on CUDA (float16)...
+[CNS] JARVIS listening loop active.
+
+# ─────────────────── EARS are listening ─────────────────── #
+Calibrated energy threshold: 0.0150
+Session will auto-stop after 4.0s of silence after speaking
+
+[Ears]---
+[CRONUS Tray] Exit requested by user. Shutting down gracefully...

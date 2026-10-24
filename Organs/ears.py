@@ -81,15 +81,22 @@ def hear(model: WhisperModel | None = None) -> str:
     ):
         energy_threshold = calibrate_threshold(audio_queue)
         
-        print("\n# ─────────────────── EARS are listening ─────────────────── #")
-        print(f"Calibrated energy threshold: {energy_threshold:.4f}")
-        print(f"Session will auto-stop after {SESSION_TIMEOUT_SECONDS}s of silence after speaking\n")
+        # Flush any residue or room echo accumulated during threshold calibration
+        while not audio_queue.empty():
+            try:
+                audio_queue.get_nowait()
+            except queue.Empty:
+                break
+
+        print("\n# ─────────────────── EARS are listening ─────────────────── #", flush=True)
+        print(f"Calibrated energy threshold: {energy_threshold:.4f}", flush=True)
+        print(f"Session will auto-stop after {SESSION_TIMEOUT_SECONDS}s of silence after speaking\n", flush=True)
         
         silence_duration = 0.0
         has_spoken_at_least_once = False
         is_speaking = False
 
-        print("[Ears]---")
+        print("[Ears]---", flush=True)
         while True:
             try:
                 frame = audio_queue.get(timeout=0.2)
@@ -116,8 +123,8 @@ def hear(model: WhisperModel | None = None) -> str:
                     if silence_duration >= PHRASE_PAUSE_SECONDS:
                         is_speaking = False
 
-                        # Transcribe if accumulated audio is at least 0.4 seconds
-                        if len(phrase_buffer) * (FRAME_DURATION_MS / 1000.0) >= 0.2:  # Lowered from 0.4s for instant speech catch
+                        # Transcribe if accumulated audio is at least 0.45s (prevents speaker echo & breath hallucinations)
+                        if len(phrase_buffer) * (FRAME_DURATION_MS / 1000.0) >= 0.45:
                             audio_chunk = np.concatenate(phrase_buffer)
                             segments, _ = model.transcribe(
                                 audio_chunk,
