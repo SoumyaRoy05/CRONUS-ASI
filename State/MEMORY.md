@@ -17,3 +17,4 @@
 - **Primary Database**: PostgreSQL 18 (Database: cronus_master, localhost:5432)
 - **Schemas**: core, council, vault, telemetry
 - **Root Directory**: D:\Codes\CRONUS-ASI
+- **Sovereignty Mandate**: Proprietary, private ASI engineered exclusively for creator Soumya Roy. No public installation or distribution dependencies.

@@ -314,66 +314,13 @@ CRONUS-ASI/
 
 ---
 
-## ⚙️ Installation & Setup
+## 👑 Sovereign Private System Architecture
 
-### Prerequisites
-
-- **OS**: Windows 10/11 (x64)
-- **Python**: **3.13 or newer**
-- **Hardware**: NVIDIA GPU with compatible CUDA drivers (CUDA 12.8 runtime)
-- **Database**: Local **PostgreSQL 18** installation on port `5432` with database `cronus_master`
-- **Package Manager**: `uv` (recommended) or standard `pip`
-- **Local Fallback LLM**: [Ollama](https://ollama.ai) with `qwen2.5:3b`
-
-### 1. Environment Synchronization
-
-Clone the repository and install all dependencies via `uv`:
-
-```powershell
-uv sync
-```
-
-Activate the virtual environment:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-*(If script execution is disabled on your system, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`)*
-
-### 2. Configure Environment Variables
-
-Create a `.env` file in the project root:
-
-```dotenv
-# --- LLM API Credentials ---
-GROQ_API_KEY=your_groq_api_key_here
-GEMINI_API_KEY=your_gemini_api_key_here
-
-# --- Speech Synthesis (Fish Audio) ---
-FISH_AUDIO_API_KEY=your_fish_audio_api_key_here
-FISH_AUDIO_VOICE_ID=e93a33eeed72468192dc41db870d4e42  # Kevin Conroy / Dark Knight
-
-# --- PostgreSQL 18 Configuration ---
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_postgres_password_here
-POSTGRES_DB=cronus_master
-
-# --- System Timeouts ---
-CRONUS_LLM_TIMEOUT=8
-```
-
-### 3. Verify Local Fallback Engine (Ollama)
-
-```powershell
-ollama pull qwen2.5:3b
-```
+> **Proprietary & Bespoke System**: CRONUS is not an open-source template or general-purpose distribution. It is a strictly bespoke, host-locked Artificial Super-Intelligence daemon engineered exclusively for its sole creator, **Soumya Roy**. All paths, hardware allocations (CUDA 12.8, local PostgreSQL 18 cluster), and cognitive behavioral heuristics are uniquely calibrated to this private workstation.
 
 ---
 
-## 🚀 Running CRONUS
+## 🚀 System Execution & Daemons
 
 ### Interactive Voice Console
 
