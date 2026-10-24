@@ -14,11 +14,11 @@
 **Sovereign Cognitive Reasoning & Multi-Agent Execution Network**  
 *Built exclusively for Creator Soumya Roy*
 
-[![PostgreSQL 18](https://img.shields.io/badge/PostgreSQL-18.0_Engine-336791?style=flat&logo=postgresql&logoColor=white)](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py)
-[![LangGraph](https://img.shields.io/badge/LangGraph-Hierarchical_StateGraph-2D3748?style=flat)](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/brain.py)
-[![Fish Audio](https://img.shields.io/badge/Fish_Audio-S2.1--pro--free-black?style=flat&logo=audio)](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/mouth.py)
-[![CUDA 12.8](https://img.shields.io/badge/PyTorch-CUDA_12.8-76B900?style=flat&logo=nvidia&logoColor=white)](file:///d:/Codes/ATLAS-Voice_Assistant/pyproject.toml)
-[![Python 3.13+](https://img.shields.io/badge/Python-3.13+-3776AB?style=flat&logo=python&logoColor=white)](file:///d:/Codes/ATLAS-Voice_Assistant/pyproject.toml)
+[![PostgreSQL 18](https://img.shields.io/badge/PostgreSQL-18.0_Engine-336791?style=flat&logo=postgresql&logoColor=white)](Database/client.py)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Hierarchical_StateGraph-2D3748?style=flat)](Organs/brain.py)
+[![Fish Audio](https://img.shields.io/badge/Fish_Audio-S2.1--pro--free-black?style=flat&logo=audio)](Organs/mouth.py)
+[![CUDA 12.8](https://img.shields.io/badge/PyTorch-CUDA_12.8-76B900?style=flat&logo=nvidia&logoColor=white)](pyproject.toml)
+[![Python 3.13+](https://img.shields.io/badge/Python-3.13+-3776AB?style=flat&logo=python&logoColor=white)](pyproject.toml)
 
 </div>
 
@@ -92,7 +92,7 @@ CRONUS is anchored by a high-performance **PostgreSQL 18** enterprise engine run
 | **Master Database** | `cronus_master` | Isolated application database |
 | **Physical Data Directory** | `D:\Codes\PostgreSql` | Dedicated SSD partition (~96.6 MB cluster size) |
 | **Active DB Footprint** | ~8.65 MB (8,861,375 bytes) | Compact, optimized relational storage |
-| **Connection Engine** | `asyncpg` via [Database/client.py](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py) | High-speed binary protocol async driver |
+| **Connection Engine** | `asyncpg` via [Database/client.py](Database/client.py) | High-speed binary protocol async driver |
 
 ### Multi-Loop Resilient Connection Engine
 
@@ -121,33 +121,33 @@ cronus_master
 
 | Table | Size | Key Columns & Data Types | Purpose & Operational Logic |
 | :--- | :--- | :--- | :--- |
-| [`core.conversations`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L182) | 16 kB | `session_id` (uuid, PK)<br>`started_at` (timestamptz)<br>`ended_at` (timestamptz)<br>`metadata` (jsonb) | High-level session boundaries. Generated at startup or when starting a new conversational stream. |
-| [`core.dialogue_turns`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L186) | 64 kB | `turn_id` (bigint, PK)<br>`session_id` (uuid)<br>`user_prompt` (text)<br>`cleaned_speech_response` (text)<br>`model_used` (varchar)<br>`ear_latency_ms` (int)<br>`brain_latency_ms` (int)<br>`mouth_latency_ms` (int)<br>`intent` (varchar)<br>`created_at` (timestamptz) | Complete historical record of every spoken interaction. Captures exact latency metrics across ears, brain, and mouth, recording the model utilized and classified intent (`REFLEX`, `COUNCIL`). |
-| [`core.user_preferences`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L267) | 32 kB | `key` (varchar, PK)<br>`value` (text)<br>`category` (varchar)<br>`metadata` (jsonb)<br>`updated_at` (timestamptz) | Key-value store for creator preferences, operational flags, and system traits. Employs `ON CONFLICT (key) DO UPDATE` for atomic upserts. |
+| [`core.conversations`](Database/client.py#L182) | 16 kB | `session_id` (uuid, PK)<br>`started_at` (timestamptz)<br>`ended_at` (timestamptz)<br>`metadata` (jsonb) | High-level session boundaries. Generated at startup or when starting a new conversational stream. |
+| [`core.dialogue_turns`](Database/client.py#L186) | 64 kB | `turn_id` (bigint, PK)<br>`session_id` (uuid)<br>`user_prompt` (text)<br>`cleaned_speech_response` (text)<br>`model_used` (varchar)<br>`ear_latency_ms` (int)<br>`brain_latency_ms` (int)<br>`mouth_latency_ms` (int)<br>`intent` (varchar)<br>`created_at` (timestamptz) | Complete historical record of every spoken interaction. Captures exact latency metrics across ears, brain, and mouth, recording the model utilized and classified intent (`REFLEX`, `COUNCIL`). |
+| [`core.user_preferences`](Database/client.py#L267) | 32 kB | `key` (varchar, PK)<br>`value` (text)<br>`category` (varchar)<br>`metadata` (jsonb)<br>`updated_at` (timestamptz) | Key-value store for creator preferences, operational flags, and system traits. Employs `ON CONFLICT (key) DO UPDATE` for atomic upserts. |
 
 #### 2. Schema: `council` (Multi-Agent Blueprints & Security Audits)
 
 | Table | Size | Key Columns & Data Types | Purpose & Operational Logic |
 | :--- | :--- | :--- | :--- |
-| [`council.blueprints`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L323) | 64 kB | `blueprint_id` (uuid, PK)<br>`goal` (text)<br>`rationale` (text)<br>`planner_model` (varchar)<br>`total_steps` (int)<br>`fallback_strategy` (text)<br>`raw_json` (jsonb)<br>`created_at` (timestamptz) | Structured execution plans synthesized by **Prometheus**. Stores goal decomposition, step counts, dependency trees, and fallback paths. |
-| [`council.task_steps`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L357) | 16 kB | `step_id` (uuid, PK)<br>`blueprint_id` (uuid, FK)<br>`step_number` (int)<br>`title` (text)<br>`action_type` (varchar)<br>`command_payload` (text)<br>`target_path` (text)<br>`risk_level` (varchar)<br>`status` (varchar)<br>`exit_code` (int)<br>`stdout` (text)<br>`stderr` (text)<br>`execution_duration_sec` (float8)<br>`created_at` (timestamptz) | Granular execution logs generated by **Atlas**. Records every shell invocation, file edit, or tool call along with exit codes, timing, and truncated output streams. |
-| [`council.security_audits`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L390) | 16 kB | `audit_id` (uuid, PK)<br>`step_id` (uuid)<br>`target_name` (text)<br>`command_or_code` (text)<br>`verdict` (varchar)<br>`score` (float8)<br>`violations` (jsonb)<br>`summary` (text)<br>`created_at` (timestamptz) | Independent security and safety verification records authored by **Themis**. Audits all AST nodes and shell commands for red-team patterns, destructive flags, and forbidden paths. |
-| [`council.deliberations`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L1) | 16 kB | `deliberation_id` (uuid, PK)<br>`directive` (text)<br>`dossier_json` (jsonb)<br>`consensus_text` (text)<br>`created_at` (timestamptz) | Multi-agent synthesis records documenting high-level Council debates, consensus determinations, and strategic dossiers from **Hyperion**. |
+| [`council.blueprints`](Database/client.py#L323) | 64 kB | `blueprint_id` (uuid, PK)<br>`goal` (text)<br>`rationale` (text)<br>`planner_model` (varchar)<br>`total_steps` (int)<br>`fallback_strategy` (text)<br>`raw_json` (jsonb)<br>`created_at` (timestamptz) | Structured execution plans synthesized by **Prometheus**. Stores goal decomposition, step counts, dependency trees, and fallback paths. |
+| [`council.task_steps`](Database/client.py#L357) | 16 kB | `step_id` (uuid, PK)<br>`blueprint_id` (uuid, FK)<br>`step_number` (int)<br>`title` (text)<br>`action_type` (varchar)<br>`command_payload` (text)<br>`target_path` (text)<br>`risk_level` (varchar)<br>`status` (varchar)<br>`exit_code` (int)<br>`stdout` (text)<br>`stderr` (text)<br>`execution_duration_sec` (float8)<br>`created_at` (timestamptz) | Granular execution logs generated by **Atlas**. Records every shell invocation, file edit, or tool call along with exit codes, timing, and truncated output streams. |
+| [`council.security_audits`](Database/client.py#L390) | 16 kB | `audit_id` (uuid, PK)<br>`step_id` (uuid)<br>`target_name` (text)<br>`command_or_code` (text)<br>`verdict` (varchar)<br>`score` (float8)<br>`violations` (jsonb)<br>`summary` (text)<br>`created_at` (timestamptz) | Independent security and safety verification records authored by **Themis**. Audits all AST nodes and shell commands for red-team patterns, destructive flags, and forbidden paths. |
+| [`council.deliberations`](Database/client.py#L1) | 16 kB | `deliberation_id` (uuid, PK)<br>`directive` (text)<br>`dossier_json` (jsonb)<br>`consensus_text` (text)<br>`created_at` (timestamptz) | Multi-agent synthesis records documenting high-level Council debates, consensus determinations, and strategic dossiers from **Hyperion**. |
 
 #### 3. Schema: `vault` (Long-Term Memory & Full-Text Lexical Search)
 
 | Table | Size | Key Columns & Data Types | Purpose & Operational Logic |
 | :--- | :--- | :--- | :--- |
-| [`vault.memories`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L420) | 56 kB | `record_id` (uuid, PK)<br>`record_type` (varchar)<br>`key` (varchar)<br>`content` (text)<br>`metadata` (jsonb)<br>`tsv` (tsvector)<br>`created_at` (timestamptz) | Semantic long-term memory store. Features a dedicated **PostgreSQL GIN full-text index** (`idx_vault_memories_tsv`) over `tsv`. Enables sub-millisecond lexical search via `ts_rank_cd(tsv, plainto_tsquery('english', query))`. |
-| [`vault.checkpoints`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L1) | 16 kB | `checkpoint_id` (varchar, PK)<br>`thread_id` (varchar)<br>`step_index` (int)<br>`state_payload` (jsonb)<br>`created_at` (timestamptz) | LangGraph checkpoint repository, supporting pause, rewind, replay, and multi-turn state resumption across system reboots. |
-| [`vault.semantic_embeddings`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L1) | 16 kB | `id` (uuid, PK)<br>`content` (text)<br>`category` (varchar)<br>`tags` (text[])<br>`embedding` (float8[])<br>`metadata` (jsonb)<br>`created_at` (timestamptz) | High-dimensional embedding storage for future vector-similarity clustering and hybrid semantic retrieval. |
+| [`vault.memories`](Database/client.py#L420) | 56 kB | `record_id` (uuid, PK)<br>`record_type` (varchar)<br>`key` (varchar)<br>`content` (text)<br>`metadata` (jsonb)<br>`tsv` (tsvector)<br>`created_at` (timestamptz) | Semantic long-term memory store. Features a dedicated **PostgreSQL GIN full-text index** (`idx_vault_memories_tsv`) over `tsv`. Enables sub-millisecond lexical search via `ts_rank_cd(tsv, plainto_tsquery('english', query))`. |
+| [`vault.checkpoints`](Database/client.py#L1) | 16 kB | `checkpoint_id` (varchar, PK)<br>`thread_id` (varchar)<br>`step_index` (int)<br>`state_payload` (jsonb)<br>`created_at` (timestamptz) | LangGraph checkpoint repository, supporting pause, rewind, replay, and multi-turn state resumption across system reboots. |
+| [`vault.semantic_embeddings`](Database/client.py#L1) | 16 kB | `id` (uuid, PK)<br>`content` (text)<br>`category` (varchar)<br>`tags` (text[])<br>`embedding` (float8[])<br>`metadata` (jsonb)<br>`created_at` (timestamptz) | High-dimensional embedding storage for future vector-similarity clustering and hybrid semantic retrieval. |
 
 #### 4. Schema: `telemetry` (System Diagnostics & Sandbox Simulation)
 
 | Table | Size | Key Columns & Data Types | Purpose & Operational Logic |
 | :--- | :--- | :--- | :--- |
-| [`telemetry.system_metrics`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L467) | 8 kB | `id` (bigint, PK)<br>`cpu_pct` (float8)<br>`ram_pct` (float8)<br>`gpu_mem_used_mb` (float8)<br>`created_at` (timestamptz) | Time-series hardware utilization telemetry tracking CPU workload, system RAM percentage, and NVIDIA GPU VRAM occupancy. |
-| [`telemetry.simulations`](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py#L1) | 16 kB | `sim_id` (uuid, PK)<br>`directive` (text)<br>`risk_score` (float8)<br>`details` (jsonb)<br>`created_at` (timestamptz) | Sandbox simulation results evaluating hypothetical execution plans before deploying modifications to the host operating system. |
+| [`telemetry.system_metrics`](Database/client.py#L467) | 8 kB | `id` (bigint, PK)<br>`cpu_pct` (float8)<br>`ram_pct` (float8)<br>`gpu_mem_used_mb` (float8)<br>`created_at` (timestamptz) | Time-series hardware utilization telemetry tracking CPU workload, system RAM percentage, and NVIDIA GPU VRAM occupancy. |
+| [`telemetry.simulations`](Database/client.py#L1) | 16 kB | `sim_id` (uuid, PK)<br>`directive` (text)<br>`risk_score` (float8)<br>`details` (jsonb)<br>`created_at` (timestamptz) | Sandbox simulation results evaluating hypothetical execution plans before deploying modifications to the host operating system. |
 
 ---
 
@@ -187,16 +187,16 @@ Below is an audit of the technologies currently operating in the codebase:
 
 | Technology | Domain | Location in Codebase | How It Is Used |
 | :--- | :--- | :--- | :--- |
-| **PostgreSQL 18** | Enterprise Relational Engine | [Database/client.py](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py) | Houses 12 tables across 4 schemas (`core`, `council`, `vault`, `telemetry`). Powers session persistence, GIN full-text search, and multi-agent coordination. |
-| **asyncpg** | Binary DB Driver | [Database/client.py](file:///d:/Codes/ATLAS-Voice_Assistant/Database/client.py) | Asynchronous connection pool interfacing with PostgreSQL over native binary protocol. |
-| **LangChain** | LLM Abstraction | [llm.py](file:///d:/Codes/ATLAS-Voice_Assistant/llm.py), [Organs/brain.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/brain.py) | Unified model interface across Groq (`ChatGroq`), Google Gemini (`ChatGoogleGenerativeAI`), NVIDIA NIM (`ChatOpenAI`), and local Ollama (`ChatOllama`). |
-| **LangGraph** | Multi-Graph Cognitive Engine | [Organs/brain.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/brain.py) | Stateful cognitive graphs utilizing `StateGraph`. Manages input preparation, LLM reasoning, speech sanitization, and Titan Council routing. |
-| **Fish Audio API** | Primary Neural Cloud TTS | [Organs/mouth.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/mouth.py) | Ultra-expressive S2.1 neural synthesis. Features Dark Knight, Morgan Freeman, GLaDOS, and David Attenborough voices with streaming chunks. |
-| **Kokoro-82M TTS** | Local Neural TTS Fallback | [Organs/mouth.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/mouth.py) | Lightweight local deep learning neural text-to-speech engine running locally on PyTorch with CUDA acceleration (`am_onyx` voice). |
-| **Faster-Whisper** | Speech-to-Text (STT) | [Organs/ears.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/ears.py) | CTranslate2-accelerated Whisper model running on GPU with real-time ambient noise energy calibration and phrase duration gating. |
+| **PostgreSQL 18** | Enterprise Relational Engine | [Database/client.py](Database/client.py) | Houses 12 tables across 4 schemas (`core`, `council`, `vault`, `telemetry`). Powers session persistence, GIN full-text search, and multi-agent coordination. |
+| **asyncpg** | Binary DB Driver | [Database/client.py](Database/client.py) | Asynchronous connection pool interfacing with PostgreSQL over native binary protocol. |
+| **LangChain** | LLM Abstraction | [llm.py](llm.py), [Organs/brain.py](Organs/brain.py) | Unified model interface across Groq (`ChatGroq`), Google Gemini (`ChatGoogleGenerativeAI`), NVIDIA NIM (`ChatOpenAI`), and local Ollama (`ChatOllama`). |
+| **LangGraph** | Multi-Graph Cognitive Engine | [Organs/brain.py](Organs/brain.py) | Stateful cognitive graphs utilizing `StateGraph`. Manages input preparation, LLM reasoning, speech sanitization, and Titan Council routing. |
+| **Fish Audio API** | Primary Neural Cloud TTS | [Organs/mouth.py](Organs/mouth.py) | Ultra-expressive S2.1 neural synthesis. Features Dark Knight, Morgan Freeman, GLaDOS, and David Attenborough voices with streaming chunks. |
+| **Kokoro-82M TTS** | Local Neural TTS Fallback | [Organs/mouth.py](Organs/mouth.py) | Lightweight local deep learning neural text-to-speech engine running locally on PyTorch with CUDA acceleration (`am_onyx` voice). |
+| **Faster-Whisper** | Speech-to-Text (STT) | [Organs/ears.py](Organs/ears.py) | CTranslate2-accelerated Whisper model running on GPU with real-time ambient noise energy calibration and phrase duration gating. |
 | **PyTorch (CUDA 12.8)** | Deep Learning Runtime | Environment & Core Models | Hardware-accelerated tensor computations on NVIDIA GPUs for Whisper and Kokoro audio processing. |
-| **SoundDevice & PyAudio** | Low-Latency Audio I/O | [Organs/ears.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/ears.py), [Organs/mouth.py](file:///d:/Codes/ATLAS-Voice_Assistant/Organs/mouth.py) | High-speed PCM streaming for microphone recording and speaker playback. |
-| **Pydantic (V2)** | Strict Schema Validation | [llm.py](file:///d:/Codes/ATLAS-Voice_Assistant/llm.py), [Titan_Council/](file:///d:/Codes/ATLAS-Voice_Assistant/Titan_Council/) | Runtime schema enforcement for structured LLM outputs, blueprint validation, and API tokens. |
+| **SoundDevice & PyAudio** | Low-Latency Audio I/O | [Organs/ears.py](Organs/ears.py), [Organs/mouth.py](Organs/mouth.py) | High-speed PCM streaming for microphone recording and speaker playback. |
+| **Pydantic (V2)** | Strict Schema Validation | [llm.py](llm.py), [Titan_Council/](Titan_Council/) | Runtime schema enforcement for structured LLM outputs, blueprint validation, and API tokens. |
 
 ---
 
