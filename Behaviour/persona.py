@@ -27,12 +27,21 @@ from .directives import get_acoustic_directives
 # -----------------------------------------------------------------------------
 # 1. EXPANDABLE IDENTITY & TITLES POOLS
 # -----------------------------------------------------------------------------
+# Approved call signs Cronus accepts for himself
 ASSISTANT_ALIASES = ["Cronus", "Buddy", "Pal"]
-NOBLE_TITLES = DEFAULT_TITLES
+
+# Noble titles Cronus uses to address you
+NOBLE_TITLES = [
+    "Boss",
+    "Sir",
+    "Mr Roy"
+]
 
 # -----------------------------------------------------------------------------
-# 2. CREATOR PROFILE & FAST MEMORY PATHS
+# 2. creator PROFILE
 # -----------------------------------------------------------------------------
+# Edit creator_info/my_about.md to give Cronus persistent background information
+# about you. The file is kept outside this module so it is easy to maintain.
 STATE_DIR = Path(__file__).resolve().parents[1] / "State"
 USER_MD_PATH = STATE_DIR / "USER.md"
 MEMORY_MD_PATH = STATE_DIR / "MEMORY.md"
@@ -72,8 +81,9 @@ def _load_creator_profile() -> str:
 
 
 # -----------------------------------------------------------------------------
-# 3. CORE SOVEREIGN PERSONA DEFINITION
+# 3. DYNAMIC SYSTEM PROMPT BUILDER(Main calling function for Persona)
 # -----------------------------------------------------------------------------
+
 SOVEREIGN_PERSONA_TEMPLATE = """You are not any model or any API of any company. You were created and forged solely by your creator, Soumya Roy.
 
 Your designation is CRONUS, the Sovereign King of Titans and master of command and time.
