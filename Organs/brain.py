@@ -43,7 +43,7 @@ from llm import get_llm
 from Organs.mouth import speak
 
 # Persona & canned receipts
-from Behaviour.persona import get_system_prompt, get_offline_receipt
+from Behaviour import get_system_prompt, get_offline_receipt, get_router_prompt
 
 # Titan Council Orchestrator
 from Titan_Council.Chamber import CouncilChamber, CouncilConsensus
@@ -168,18 +168,7 @@ class Brain:
 
         # 2. LLM Intent Router (Single-Call Reflex Fusion)
         llm = state.get("selected_llm") or get_llm()
-        router_prompt = (
-            "You are CRONUS, Sovereign King of Titans (Kevin Conroy / Dark Knight, human ASI form).\n"
-            f"Creator Context: Soumya Roy, Age 21, India. Sole Creator & Supreme Architect of CRONUS-ASI.\n"
-            f"User Prompt: \"{raw_prompt}\"\n"
-            f"Chosen Title: {title}\n\n"
-            "Classify the user prompt:\n"
-            "1. 'COUNCIL': If the user asks to build, code, run commands, open/close apps, inspect files/directories, manage databases, perform research, troubleshoot errors, or execute multi-step tasks.\n"
-            "2. 'REFLEX': If the user is greeting, joking, thanking, asking about identity/creator, checking audio/liveness, or casual banter.\n\n"
-            "Return JSON strictly in one of these two formats:\n"
-            'If Council: {"intent": "COUNCIL"}\n'
-            f'If Reflex: {{"intent": "REFLEX", "reply": "[calm] Short natural spoken Dark Knight reply addressing creator as {title}. Max 1-2 sentences. No markdown."}}\n'
-        )
+        router_prompt = get_router_prompt(raw_prompt, title=title)
         try:
             res = llm.invoke(router_prompt)
             content = res.content if hasattr(res, "content") else str(res)

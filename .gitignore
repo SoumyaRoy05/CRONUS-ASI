@@ -9,3 +9,7 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+# Runtime lock and log files
+*.lock
+*.log
