@@ -97,7 +97,7 @@ class BrainState(TypedDict, total=False):
 
 class Brain:
 
-    # Stores the Mouth function, Creates the conversation memory, Builds the Brain’s LangGraph workflow
+    # Stores the Mouth function, Creates the conversation memory, Builds the Brain's LangGraph workflow
     def __init__(self, mouth: Any | None = None):
         """Initializes vocal connections, Titan Council chamber, and compiles the multi-graph hierarchy."""
         self.mouth: Any = mouth if mouth is not None else speak
@@ -483,7 +483,7 @@ class Brain:
     # takes the user prompt as input and returns the final vocalized response text
     def think(self, user_prompt: str) -> str:
         """Invoked by ears.take_input() to run the complete master cognitive graph."""
-        print("\n# ─────────────────── BRAIN is thinking ─────────────────── #")
+        print("\n# ------------------------------- BRAIN is thinking ------------------------------- #")
         print(f"[Brain]---\nReceived user prompt: {user_prompt}", flush=True)
 
         if not user_prompt or not user_prompt.strip():
