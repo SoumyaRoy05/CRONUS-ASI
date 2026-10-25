@@ -303,11 +303,11 @@ class Brain:
             "phase_latencies": existing_latencies,
         }
 
-    # Node Function 2F (Phase 4 Sovereign Decree & Archiving)
+    # Node Function 2F (Phase 4 Council Consensus & Archiving)
     # uses the phase4_synthesize() from Titan_Council/Chamber.py to synthesize consensus and save to PostgreSQL
-    # takes the BrainState and returns the sovereign decree for CRONUS to speak aloud
-    def phase4_decree_node(self, state: BrainState) -> dict:
-        """Phase 4: Synthesize Sovereign Decree, persist to PostgreSQL, finalize raw response."""
+    # takes the BrainState and returns the synthesized council response for CRONUS to speak aloud
+    def phase4_consensus_node(self, state: BrainState) -> dict:
+        """Phase 4: Synthesize Council Consensus, persist to PostgreSQL, finalize raw response."""
         directive = state.get("user_prompt", "")
         blueprint = state.get("phase3_blueprint")
         deliberations = state.get("phase2_deliberations", {})
@@ -329,7 +329,7 @@ class Brain:
         )
         return {
             "council_consensus": consensus,
-            "raw_response": consensus.sovereign_decree,
+            "raw_response": consensus.synthesized_response,
         }
 
     # =========================================================================
@@ -409,7 +409,7 @@ class Brain:
         workflow.add_node("phase1_gather", self.phase1_gather_node)
         workflow.add_node("phase2_deliberate", self.phase2_deliberate_node)
         workflow.add_node("phase3_architect", self.phase3_architect_node)
-        workflow.add_node("phase4_decree", self.phase4_decree_node)
+        workflow.add_node("phase4_consensus", self.phase4_consensus_node)
 
         # Edges---
         workflow.add_edge(START, "classify_intent")
@@ -424,8 +424,8 @@ class Brain:
         workflow.add_edge("fast_reflex_llm", END)
         workflow.add_edge("phase1_gather", "phase2_deliberate")
         workflow.add_edge("phase2_deliberate", "phase3_architect")
-        workflow.add_edge("phase3_architect", "phase4_decree")
-        workflow.add_edge("phase4_decree", END)
+        workflow.add_edge("phase3_architect", "phase4_consensus")
+        workflow.add_edge("phase4_consensus", END)
 
         return workflow.compile()
 

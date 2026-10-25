@@ -396,7 +396,7 @@ During execution, CRONUS formats its operations with clear terminal badges:
 | Badge | Meaning |
 | :--- | :--- |
 | `[CRONUS 👑] [REFLEX]` | Instant conversational response produced by the front-facing Brain. |
-| `[CRONUS 👑]` | Sovereign decree or multi-agent action resolved through the Titan High Chamber. |
+| `[CRONUS 👑]` | Synthesized council response or multi-agent action resolved through the Titan High Chamber. |
 | `[CRONUS 👑] [OFFLINE]` | Voice synthesis rendered locally via Kokoro-82M due to lack of cloud connectivity. |
 | `[CRONUS 👑] [ALERT]` | System safety interception or hardware anomaly notification. |
 | `[CRONUS 👑] [TRAY]` | System tray event (startup, sleep, resume, or exit). |

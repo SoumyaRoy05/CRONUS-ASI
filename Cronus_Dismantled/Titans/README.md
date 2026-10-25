@@ -103,5 +103,5 @@ Just like the physical Organs print operational status during execution (`[Ears]
 [Atlas] Received Step 1 from [Prometheus]: '...'
 [Atlas] Executing shell command: '...'
 [Council Chamber] Consensus reached in 35.8s (Parallel speedup: 1.20x).
-[Council Chamber] Decree formulated: ...
+[Council Chamber] Response formulated: ...
 ```

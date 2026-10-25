@@ -1,6 +1,6 @@
 """
 Council Chamber - Titan Council Orchestrator
-Asynchronous deliberation room where all 6 Titans convene to co-develop the sovereign decree.
+Asynchronous deliberation room where all 6 Titans convene to co-develop the synthesized response.
 Forged for creator Soumya Roy under the sovereign command of CRONUS ASI.
 """
 
@@ -31,7 +31,8 @@ class CouncilConsensus(BaseModel):
     blueprint: Optional[ArchitecturalBlueprint] = Field(default=None, description="Prometheus Master Blueprint")
     deliberations: Dict[str, str] = Field(default_factory=dict, description="Transcripts of each Titan's stance")
     audit_verdict: str = Field(default="APPROVED", description="Themis quality & safety verdict")
-    sovereign_decree: str = Field(description="The synthesized voice/action response for CRONUS")
+    synthesized_response: str = Field(description="The synthesized voice/action response for CRONUS")
+
     total_wall_clock_ms: float = Field(default=0.0, description="Total parallel execution duration")
     sequential_estimate_ms: float = Field(default=0.0, description="Estimated time if executed sequentially")
     concurrency_speedup: float = Field(default=1.0, description="Speedup multiplier achieved via asyncio")
@@ -195,7 +196,7 @@ class CouncilChamber:
         return blueprint, audit_verdict, latencies
 
     # =========================================================================
-    # PHASE 4: Council Consensus, Archiving & Sovereign Decree
+    # PHASE 4: Council Consensus, Archiving & Response Synthesis
     # =========================================================================
     async def phase4_synthesize(
         self,
@@ -207,19 +208,19 @@ class CouncilChamber:
         start_time: float,
         title: str = "Sir",
     ) -> CouncilConsensus:
-        """Phase 4: Synthesize Sovereign Decree, persist to PostgreSQL, and finalize consensus."""
+        """Phase 4: Synthesize council response, persist to PostgreSQL, and finalize consensus."""
         total_wall_clock_ms = (time.perf_counter() - start_time) * 1000.0
         sequential_sum_ms = sum(agent_latencies.values())
         speedup = sequential_sum_ms / total_wall_clock_ms if total_wall_clock_ms > 0 else 1.0
 
         if audit_verdict == "REJECTED":
-            sovereign_decree = (
+            synthesized_response = (
                 f"Council deliberation halted, {title}. "
                 f"Themis has exercised a security veto and quarantined the blueprint steps due to destructive command violations. "
                 f"Atlas execution has been suspended to protect the host system."
             )
         else:
-            sovereign_decree = (
+            synthesized_response = (
                 f"The Council of Titans has converged, {title}. "
                 f"Prometheus has architected a {len(blueprint.steps)}-step blueprint. "
                 f"Atlas and Helios stand ready for system and visual execution, "
@@ -243,7 +244,7 @@ class CouncilChamber:
             logger.debug("Database archiving fallback: %s", e)
 
         print(f"[Council Chamber] Consensus reached in {total_wall_clock_ms:.1f}ms (Parallel speedup: {speedup:.2f}x).", flush=True)
-        print(f"[Council Chamber] Sovereign Decree formulated for {title}.", flush=True)
+        print(f"[Council Chamber] Council response synthesized for {title}.", flush=True)
         print(f"[Council Chamber] ==================================================\n", flush=True)
 
         return CouncilConsensus(
@@ -251,7 +252,7 @@ class CouncilChamber:
             blueprint=blueprint,
             deliberations=deliberations,
             audit_verdict=audit_verdict,
-            sovereign_decree=sovereign_decree,
+            synthesized_response=synthesized_response,
             total_wall_clock_ms=total_wall_clock_ms,
             sequential_estimate_ms=sequential_sum_ms,
             concurrency_speedup=speedup,
